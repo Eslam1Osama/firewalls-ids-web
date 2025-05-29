@@ -25,8 +25,8 @@ The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.
 ## 🛠️ Technologies Used
 
 - HTML5
-- CSS3 (optional)
-- JavaScript (optional)
+- CSS3
+- JavaScript
 - Hosted on [Vercel](https://vercel.com)
 
 ## 🚀 Live Demo
@@ -34,4 +34,35 @@ The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.
 [Click here to view the site](https://your-vercel-url.vercel.app)
 
 ## 📁 Folder Structure
+├── index.html # Main content page
+├── media/ # sheet in word form
+└── assets/ # Images or additional content
+
+markdown
+نسخ
+تحرير
+
+## 🎓 Purpose
+
+Created as a modern, mobile-friendly alternative to traditional PDF or DOC-based handouts. Helps engage students through a web-based learning experience.
+
+## ✅ How to Use
+
+1. Fork or clone the repository.
+2. Modify or expand content if needed.
+3. Deploy via Vercel (auto-deploy from GitHub).
+
+## 🛠️ Tech Stack
+
+- HTML5 / CSS3 / JavaScript
+- GitHub for version control
+- Vercel for deployment
+
+## 👨‍🏫 Contributors
+
+- Dr. Mahmoud Yehia (Lecturer)
+- Eng. Eslam Osama (TA) – Developer & Designer
+
+> Designed with students in mind – for clearer learning, better engagement, and easier access.
+
 
