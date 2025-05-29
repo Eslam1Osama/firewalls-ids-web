@@ -40,11 +40,7 @@ The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.
 ├── media/ # sheet in word form
 
 └── assets/ # Images or additional content
-
-markdown
-نسخ
 تحرير
-
 ## 🎓 Purpose
 
 Created as a modern, mobile-friendly alternative to traditional PDF or DOC-based handouts. Helps engage students through a web-based learning experience.
