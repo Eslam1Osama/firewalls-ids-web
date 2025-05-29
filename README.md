@@ -31,7 +31,7 @@ The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.
 
 ## 🚀 Live Demo
 
-[Click here to view the site](https://your-vercel-url.vercel.app)
+[Click here to view the site]([https://your-vercel-url.vercel.app](https://firewalls-ids-web.vercel.app/))
 
 ## 📁 Folder Structure
 
