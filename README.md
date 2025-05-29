@@ -34,8 +34,11 @@ The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.
 [Click here to view the site](https://your-vercel-url.vercel.app)
 
 ## 📁 Folder Structure
+
 ├── index.html # Main content page
+
 ├── media/ # sheet in word form
+
 └── assets/ # Images or additional content
 
 markdown
