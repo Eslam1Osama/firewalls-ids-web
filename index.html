@@ -6,7 +6,9 @@
     <title>Data Security Learning Module - Firewalls & IDS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> Removed jsPDF as we are switching to DOCX -->
-    <script src="https://unpkg.com/docx@latest/build/index.js"></script> <!-- DOCX library CDN -->
+    <!-- <script src="https://unpkg.com/docx@latest/build/index.js"></script> Removed DOCX library as we are switching to ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
             --primary: #00ACC1; /* main blue */
@@ -1753,8 +1755,8 @@
                 <button class="download-btn" onclick="downloadWordFile()">
                     <i class="fas fa-file-word"></i> Download Original Sheet
                 </button>
-                <button class="download-btn" onclick="downloadFullPageDocx()">
-                    <i class="fas fa-file-word"></i> Download Content (Word)
+                <button class="download-btn" onclick="downloadFullPageZip()">
+                    <i class="fas fa-file-zip-o"></i> Download Content (ZIP)
                 </button>
             </div>
         </div>
@@ -3189,6 +3191,109 @@
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
             if (nav) nav.classList.remove('screenshot-hide');
             console.log('[DOCX DEBUG] Download buttons and navigation shown again.');
+        }
+
+        async function downloadFullPageZip() {
+            console.log('downloadFullPageZip called!'); // Debugging log
+            alert('Download ZIP button clicked!'); // For immediate feedback
+
+            // Hide download buttons and navigation
+            const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
+            allButtons.forEach(b => b.classList.add('screenshot-hide'));
+            const nav = document.querySelector('.navigation');
+            if (nav) nav.classList.add('screenshot-hide');
+
+            const sectionsOrder = [
+                'objectives',
+                'firewalls',
+                'firewall-types',
+                'dmz',
+                'ids',
+                'quiz'
+            ];
+
+            const zip = new JSZip();
+            let sectionCount = 0;
+
+            for (const sectionId of sectionsOrder) {
+                const section = document.getElementById(sectionId);
+                if (!section) {
+                    console.warn(`[ZIP DEBUG] Section ${sectionId} not found, skipping.`);
+                    continue;
+                }
+                console.log(`[ZIP DEBUG] Processing section: ${sectionId}`);
+                sectionCount++;
+
+                // Temporarily make the section active if it's not, to ensure it renders for html2canvas
+                const wasActive = section.classList.contains('active');
+                if (!wasActive) {
+                    section.classList.add('active');
+                    console.log(`[ZIP DEBUG] Added 'active' class to section ${sectionId}.`);
+                    await new Promise(resolve => setTimeout(50)); // Short delay for rendering
+                }
+
+                // Expand all content within the current section and prepare styles
+                await setSectionContentVisibility(section, true);
+                console.log(`[ZIP DEBUG] Content visibility set to true for section ${sectionId}.`);
+
+                try {
+                    const canvas = await html2canvas(section, {
+                        backgroundColor: null,
+                        useCORS: true,
+                        scale: 2,
+                        logging: true, // Enable html2canvas logging for debugging
+                        allowTaint: true,
+                    });
+                    console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+
+                    // Get PNG data URL and convert to Blob/Base64 for JSZip
+                    const imgDataUrl = canvas.toDataURL('image/png');
+                    const imgDataBase64 = imgDataUrl.split(',')[1]; // Get base64 part
+                    console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
+
+                    zip.file(`${sectionId}.png`, imgDataBase64, { base64: true });
+                    console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
+
+                } catch (error) {
+                    console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
+                    alert(`Failed to capture section ${sectionId} for ZIP. Please check console for errors.`);
+                }
+
+                // Revert content state and styles immediately after capturing the section
+                await setSectionContentVisibility(section, false);
+                console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
+
+                // Revert active state if it was temporarily added
+                if (!wasActive) {
+                    section.classList.remove('active');
+                    console.log(`[ZIP DEBUG] Removed 'active' class from section ${sectionId}.`);
+                }
+            }
+
+            console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP.');
+            if (sectionCount === 0) {
+                alert('No sections found to download. Please ensure sections have correct IDs.');
+                console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
+                 // Show download buttons and navigation again even if no sections
+                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+                if (nav) nav.classList.remove('screenshot-hide');
+                return;
+            }
+
+            // Generate and save the ZIP file
+            zip.generateAsync({ type: 'blob' }).then(function (blob) {
+                saveAs(blob, 'Data_Security_Module_Sections.zip');
+                console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
+                alert('ZIP file downloaded successfully!');
+            }).catch(error => {
+                console.error('[ZIP ERROR] Error generating or saving ZIP file:', error);
+                alert('Failed to create or download ZIP file. Please check console for errors.');
+            });
+
+            // Show download buttons and navigation again
+            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+            if (nav) nav.classList.remove('screenshot-hide');
+            console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
         }
 
     </script>
