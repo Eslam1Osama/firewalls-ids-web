@@ -3203,6 +3203,29 @@
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
+            // Apply screenshot-ready class to body (or container) for global styling adjustments
+            document.body.classList.add('screenshot-ready');
+            const container = document.querySelector('.container');
+            if (container) {
+                // Temporarily store original container styles and override for capture
+                const containerProps = ['position', 'width', 'maxWidth', 'left', 'top', 'zIndex', 'boxShadow', 'background', 'overflow', 'margin', 'padding'];
+                containerProps.forEach(prop => {
+                    originalContainerStyles[prop] = container.style[prop];
+                });
+                container.style.position = 'static';
+                container.style.width = '100vw';
+                container.style.maxWidth = '100vw';
+                container.style.left = '0';
+                container.style.top = '0';
+                container.style.zIndex = '9999';
+                container.style.boxShadow = 'none';
+                container.style.background = getComputedStyle(container).backgroundColor || 'white';
+                container.style.overflow = 'visible';
+                container.style.margin = '0';
+                container.style.padding = '0';
+                container.classList.add('screenshot-ready'); // Add screenshot-ready to container as well
+            }
+
             const sectionsOrder = [
                 'objectives',
                 'firewalls',
@@ -3224,17 +3247,52 @@
                 console.log(`[ZIP DEBUG] Processing section: ${sectionId}`);
                 sectionCount++;
 
-                // Temporarily make the section active if it's not, to ensure it renders for html2canvas
-                const wasActive = section.classList.contains('active');
-                if (!wasActive) {
-                    section.classList.add('active');
-                    console.log(`[ZIP DEBUG] Added 'active' class to section ${sectionId}.`);
-                    await new Promise(resolve => setTimeout(200)); // Increased delay for rendering
-                }
+                // Store original section styles and apply temporary styles for capture
+                const originalSectionDisplay = section.style.display;
+                const originalSectionOverflow = section.style.overflow;
+                const originalSectionTransition = section.style.transition;
+                section.style.display = 'block'; // Ensure section is visible
+                section.style.overflow = 'visible'; // Ensure content is not clipped
+                section.style.transition = 'none'; // Disable transitions during capture
+                section.classList.add('screenshot-ready'); // Add screenshot-ready to current section
 
-                // Expand all content within the current section and prepare styles
-                await setSectionContentVisibility(section, true);
-                console.log(`[ZIP DEBUG] Content visibility set to true for section ${sectionId}.`);
+                // Store original states of collapsible elements within THIS section and force open/show
+                const elementsToOverride = section.querySelectorAll(
+                    '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
+                    '.interactive-element, .firewall-function-card, .limitation-card, .question'
+                );
+                const savedElementStates = new Map(); // Map<element, { classes: string[], styles: Map<string, string> }>
+                const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display', 'overflow'];
+
+                elementsToOverride.forEach(el => {
+                    const elStyles = new Map();
+                    stylePropsToOverride.forEach(prop => {
+                        elStyles.set(prop, el.style[prop]); // Save current inline style
+                        el.style[prop] = ''; // Clear inline style first to let CSS rules apply
+                    });
+                    savedElementStates.set(el, {
+                        classes: Array.from(el.classList),
+                        styles: elStyles
+                    });
+
+                    // Force open/show
+                    el.classList.add('open');
+                    el.classList.add('show');
+                    el.style.transition = 'none';
+                    el.style.transform = 'none';
+                    el.style.opacity = '1';
+                    el.style.maxHeight = '20000px'; // Ensure content is fully visible
+                    el.style.overflow = 'visible';
+
+                    // For content divs, ensure padding and margin are applied for layout
+                    if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
+                        el.style.paddingTop = '10px';
+                        el.style.marginTop = '10px';
+                    }
+                });
+                await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
+                await new Promise(r => setTimeout(r, 200)); // Increased delay for rendering completion after style changes
+
                 console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
 
                 try {
@@ -3242,14 +3300,13 @@
                         backgroundColor: null,
                         useCORS: true,
                         scale: 2,
-                        logging: true, // Enable html2canvas logging for debugging
+                        logging: true,
                         allowTaint: true,
                     });
                     console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                    // Get PNG data URL and convert to Blob/Base64 for JSZip
                     const imgDataUrl = canvas.toDataURL('image/png');
-                    const imgDataBase64 = imgDataUrl.split(',')[1]; // Get base64 part
+                    const imgDataBase64 = imgDataUrl.split(',')[1]; 
                     console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
 
                     zip.file(`${sectionId}.png`, imgDataBase64, { base64: true });
@@ -3258,16 +3315,27 @@
                 } catch (error) {
                     console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
                     alert(`Failed to capture section ${sectionId} for ZIP. Please check console for errors.`);
-                }
+                } finally {
+                    // Restore original section styles
+                    section.style.display = originalSectionDisplay;
+                    section.style.overflow = originalSectionOverflow;
+                    section.style.transition = originalSectionTransition;
+                    section.classList.remove('screenshot-ready'); // Remove screenshot-ready from current section
 
-                // Revert content state and styles immediately after capturing the section
-                await setSectionContentVisibility(section, false);
-                console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
-
-                // Revert active state if it was temporarily added
-                if (!wasActive) {
-                    section.classList.remove('active');
-                    console.log(`[ZIP DEBUG] Removed 'active' class from section ${sectionId}.`);
+                    // Restore original states of collapsible elements within THIS section
+                    elementsToOverride.forEach(el => {
+                        if (savedElementStates.has(el)) {
+                            const savedState = savedElementStates.get(el);
+                            // Restore classes
+                            el.className = ''; // Clear existing classes
+                            savedState.classes.forEach(cls => el.classList.add(cls));
+                            // Restore original inline styles
+                            savedState.styles.forEach((value, prop) => {
+                                el.style[prop] = value;
+                            });
+                        }
+                    });
+                    console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
                 }
             }
 
@@ -3275,9 +3343,17 @@
             if (sectionCount === 0) {
                 alert('No sections found to download. Please ensure sections have correct IDs.');
                 console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
-                 // Show download buttons and navigation again even if no sections
+                // Show download buttons and navigation again even if no sections
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
                 if (nav) nav.classList.remove('screenshot-hide');
+                // Restore container styles if no sections were processed
+                if (container) {
+                    Object.keys(originalContainerStyles).forEach(prop => {
+                        container.style[prop] = originalContainerStyles[prop];
+                    });
+                    container.classList.remove('screenshot-ready');
+                }
+                document.body.classList.remove('screenshot-ready');
                 return;
             }
 
@@ -3295,6 +3371,15 @@
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
             if (nav) nav.classList.remove('screenshot-hide');
             console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
+            
+            // Restore global body and container styles
+            document.body.classList.remove('screenshot-ready');
+            if (container) {
+                Object.keys(originalContainerStyles).forEach(prop => {
+                    container.style[prop] = originalContainerStyles[prop];
+                });
+                container.classList.remove('screenshot-ready');
+            }
         }
 
     </script>
