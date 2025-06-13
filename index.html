@@ -3084,38 +3084,45 @@
             const doc = new Document({
                 sections: []
             });
+            console.log('[DOCX DEBUG] docx.Document initialized.');
 
             for (const sectionId of sectionsOrder) {
                 const section = document.getElementById(sectionId);
-                if (!section) continue;
+                if (!section) {
+                    console.warn(`[DOCX DEBUG] Section ${sectionId} not found, skipping.`);
+                    continue;
+                }
+                console.log(`[DOCX DEBUG] Processing section: ${sectionId}`);
 
                 // Temporarily make the section active if it's not, to ensure it renders for html2canvas
                 const wasActive = section.classList.contains('active');
                 if (!wasActive) {
                     section.classList.add('active');
+                    console.log(`[DOCX DEBUG] Added 'active' class to section ${sectionId}.`);
                     await new Promise(resolve => setTimeout(50)); // Short delay for rendering
                 }
 
                 // Expand all content within the current section and prepare styles
                 await setSectionContentVisibility(section, true);
+                console.log(`[DOCX DEBUG] Content visibility set to true for section ${sectionId}.`);
 
                 try {
                     const canvas = await html2canvas(section, {
                         backgroundColor: null,
                         useCORS: true,
                         scale: 2,
-                        logging: false,
+                        logging: true, // Enable html2canvas logging for debugging
                         allowTaint: true,
                     });
+                    console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
                     const imgDataUrl = canvas.toDataURL('image/png');
                     const imgData = imgDataUrl.split(',')[1]; // Get base64 part
+                    console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
 
                     // Calculate image dimensions to fit within a standard A4 page (approx)
-                    // Max width for image in DOCX without scaling issues is typically around 6 inches (approx 5760 twips) for A4 portrait.
-                    // Using pixels directly, as the docx library handles transformation.
-                    const maxDocxWidthPx = 500; // Arbitrary max width for image in DOCX to keep it reasonable for A4
-                    const maxDocxHeightPx = 700; // Arbitrary max height for A4
+                    const maxDocxWidthPx = 500; 
+                    const maxDocxHeightPx = 700; 
                     
                     let imgWidth = canvas.width;
                     let imgHeight = canvas.height;
@@ -3129,6 +3136,7 @@
                         imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
                         imgHeight = maxDocxHeightPx;
                     }
+                    console.log(`[DOCX DEBUG] Image dimensions for section ${sectionId}: ${imgWidth}x${imgHeight}`);
 
                     doc.addSection({
                         children: [
@@ -3146,21 +3154,24 @@
                             new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
                         ],
                     });
-                    console.log(`[DOCX DEBUG] Image added to DOCX for section ${sectionId}.`);
+                    console.log(`[DOCX DEBUG] Section added to DOCX document for ${sectionId}.`);
 
                 } catch (error) {
-                    console.error(`Error generating DOCX for section ${sectionId}:`, error);
-                    alert(`Failed to generate Word document for section ${sectionId}. Please try again.`);
+                    console.error(`[DOCX ERROR] Error during canvas generation or section addition for ${sectionId}:`, error);
+                    alert(`Failed to generate Word document for section ${sectionId}. Please try again and check console for errors.`);
                 }
 
                 // Revert content state and styles immediately after capturing the section
                 await setSectionContentVisibility(section, false);
+                console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
 
                 // Revert active state if it was temporarily added
                 if (!wasActive) {
                     section.classList.remove('active');
+                    console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
                 }
             }
+            console.log('[DOCX DEBUG] All sections processed. Attempting to pack document.');
 
             // Generate and save the DOCX file
             Packer.toBlob(doc).then(blob => {
@@ -3168,15 +3179,16 @@
                 link.href = URL.createObjectURL(blob);
                 link.download = 'Data_Security_Module.docx';
                 link.click();
-                console.log('Word document generated and downloaded!');
+                console.log('[DOCX DEBUG] Word document generated and downloaded!');
             }).catch(error => {
-                console.error('Error packing Word document:', error);
-                alert('Failed to create Word document. Please try again.');
+                console.error('[DOCX ERROR] Error packing Word document:', error);
+                alert('Failed to create Word document. Please try again and check console for errors.');
             });
 
             // Show download buttons and navigation again
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
             if (nav) nav.classList.remove('screenshot-hide');
+            console.log('[DOCX DEBUG] Download buttons and navigation shown again.');
         }
 
     </script>
