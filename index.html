@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Security Learning Module - Firewalls & IDS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> Removed jsPDF as we are switching to DOCX -->
+    <script src="https://unpkg.com/docx@latest/build/index.js"></script> <!-- DOCX library CDN -->
     <style>
         :root {
             --primary: #00ACC1; /* main blue */
@@ -1752,8 +1753,8 @@
                 <button class="download-btn" onclick="downloadWordFile()">
                     <i class="fas fa-file-word"></i> Download Original Sheet
                 </button>
-                <button class="download-btn" onclick="downloadFullPagePdf()">
-                    <i class="fas fa-file-pdf"></i> Download Content (PDF)
+                <button class="download-btn" onclick="downloadFullPageDocx()">
+                    <i class="fas fa-file-word"></i> Download Content (Word)
                 </button>
             </div>
         </div>
@@ -2919,7 +2920,7 @@
         });
 
         // New functions for PDF and PNG downloads
-        window.jsPDF = window.jspdf.jsPDF; // Initialize jsPDF
+        // Removed window.jsPDF = window.jspdf.jsPDF; // Initialize jsPDF
 
         // Store original states of collapsible elements and their styles
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
@@ -3060,12 +3061,15 @@
             if (nav) nav.classList.remove('screenshot-hide');
         }
 
-        async function downloadFullPagePdf() {
-            console.log('downloadFullPagePdf called!'); // Debugging log
-            alert('Download PDF button clicked!'); // Bomb-proof alert for initial debugging
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'pt', 'a4'); // 'p' for portrait, 'pt' for points, 'a4' size
-            const margin = 20; // Margin for PDF pages
+        async function downloadFullPageDocx() {
+            console.log('downloadFullPageDocx called!'); // Debugging log
+            alert('Download Word button clicked!'); // Bomb-proof alert for initial debugging
+
+            // Hide download buttons and navigation
+            const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
+            allButtons.forEach(b => b.classList.add('screenshot-hide'));
+            const nav = document.querySelector('.navigation');
+            if (nav) nav.classList.add('screenshot-hide');
 
             const sectionsOrder = [
                 'objectives',
@@ -3076,11 +3080,10 @@
                 'quiz'
             ];
 
-            // Hide download buttons and navigation
-            const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
-            allButtons.forEach(b => b.classList.add('screenshot-hide'));
-            const nav = document.querySelector('.navigation');
-            if (nav) nav.classList.add('screenshot-hide');
+            const { Document, Packer, Paragraph, ImageRun } = docx;
+            const doc = new Document({
+                sections: []
+            });
 
             for (const sectionId of sectionsOrder) {
                 const section = document.getElementById(sectionId);
@@ -3101,25 +3104,53 @@
                         backgroundColor: null,
                         useCORS: true,
                         scale: 2,
-                        logging: false, // Set logging to false for production
+                        logging: false,
                         allowTaint: true,
-                        // Removed scrollY: -window.scrollY as it's for full page capture, not individual sections
                     });
-                    console.log(`[PDF DEBUG] Canvas generated for section ${sectionId}. Dimensions: ${canvas.width}x${canvas.height}`);
 
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    const imgDataUrl = canvas.toDataURL('image/png');
+                    const imgData = imgDataUrl.split(',')[1]; // Get base64 part
 
-                    if (sectionsOrder.indexOf(sectionId) > 0) { // Add new page for subsequent sections
-                        pdf.addPage();
+                    // Calculate image dimensions to fit within a standard A4 page (approx)
+                    // Max width for image in DOCX without scaling issues is typically around 6 inches (approx 5760 twips) for A4 portrait.
+                    // Using pixels directly, as the docx library handles transformation.
+                    const maxDocxWidthPx = 500; // Arbitrary max width for image in DOCX to keep it reasonable for A4
+                    const maxDocxHeightPx = 700; // Arbitrary max height for A4
+                    
+                    let imgWidth = canvas.width;
+                    let imgHeight = canvas.height;
+
+                    // Scale image to fit within A4 landscape/portrait, preserving aspect ratio
+                    if (imgWidth > maxDocxWidthPx) {
+                        imgHeight = (imgHeight * maxDocxWidthPx) / imgWidth;
+                        imgWidth = maxDocxWidthPx;
                     }
-                    pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-                    console.log(`[PDF DEBUG] Image added to PDF for section ${sectionId}.`);
+                    if (imgHeight > maxDocxHeightPx) {
+                        imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
+                        imgHeight = maxDocxHeightPx;
+                    }
+
+                    doc.addSection({
+                        children: [
+                            new Paragraph({
+                                children: [
+                                    new ImageRun({
+                                        data: imgData,
+                                        transformation: {
+                                            width: imgWidth,
+                                            height: imgHeight,
+                                        },
+                                    }),
+                                ],
+                            }),
+                            new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
+                        ],
+                    });
+                    console.log(`[DOCX DEBUG] Image added to DOCX for section ${sectionId}.`);
 
                 } catch (error) {
-                    console.error(`Error generating PDF for section ${sectionId}:`, error); // Keep console.error for actual errors
-                    // alert(`Failed to generate PDF for section ${sectionId}. Please try again.`); // Removed temporary alert
+                    console.error(`Error generating DOCX for section ${sectionId}:`, error);
+                    alert(`Failed to generate Word document for section ${sectionId}. Please try again.`);
                 }
 
                 // Revert content state and styles immediately after capturing the section
@@ -3131,12 +3162,23 @@
                 }
             }
 
-            pdf.save('Data_Security_Module.pdf');
+            // Generate and save the DOCX file
+            Packer.toBlob(doc).then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'Data_Security_Module.docx';
+                link.click();
+                console.log('Word document generated and downloaded!');
+            }).catch(error => {
+                console.error('Error packing Word document:', error);
+                alert('Failed to create Word document. Please try again.');
+            });
 
             // Show download buttons and navigation again
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
             if (nav) nav.classList.remove('screenshot-hide');
         }
+
     </script>
 
     <footer>
