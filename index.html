@@ -3062,7 +3062,7 @@
 
         async function downloadFullPagePdf() {
             console.log('downloadFullPagePdf called!'); // Debugging log
-            // alert('downloadFullPagePdf called!'); // Temporary alert for debugging - REMOVED
+            alert('Download PDF button clicked!'); // Bomb-proof alert for initial debugging
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'pt', 'a4'); // 'p' for portrait, 'pt' for points, 'a4' size
             const margin = 20; // Margin for PDF pages
