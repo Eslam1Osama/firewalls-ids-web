@@ -2596,67 +2596,67 @@
    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        // Basic code protection
-        (function() {
-            // Prevent viewing source code
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U
-                    e.preventDefault();
-                    return false;
-                }
-            });
+        // // Basic code protection - TEMPORARILY DISABLED FOR DEBUGGING
+        // (function() {
+        //     // Prevent viewing source code
+        //     document.addEventListener('keydown', function(e) {
+        //         if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U
+        //             e.preventDefault();
+        //             return false;
+        //         }
+        //     });
 
-            // Allow normal right-click, but show copyright notice if right-click with modifier keys
-            document.addEventListener('contextmenu', function(e) {
-                if (e.ctrlKey || e.shiftKey || e.altKey) {
-                    e.preventDefault();
-                    showCopyrightNotice();
-                    return false;
-                }
-                // Otherwise, allow normal right-click
-            });
+        //     // Allow normal right-click, but show copyright notice if right-click with modifier keys
+        //     document.addEventListener('contextmenu', function(e) {
+        //         if (e.ctrlKey || e.shiftKey || e.altKey) {
+        //             e.preventDefault();
+        //             showCopyrightNotice();
+        //             return false;
+        //         }
+        //         // Otherwise, allow normal right-click
+        //     });
 
-            // Show copyright notice on DevTools shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Block Ctrl+Shift+I (Inspect)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-                    e.preventDefault();
-                    showCopyrightNotice();
-                    return false;
-                }
-                // Block F12
-                if (e.keyCode === 123) {
-                    e.preventDefault();
-                    showCopyrightNotice();
-                    return false;
-                }
-                // Block Ctrl+Shift+J (Console)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-                    e.preventDefault();
-                    showCopyrightNotice();
-                    return false;
-                }
-                // Block Ctrl+Shift+C (Inspect Element)
-                if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-                    e.preventDefault();
-                    showCopyrightNotice();
-                    return false;
-                }
-            });
+        //     // Show copyright notice on DevTools shortcuts
+        //     document.addEventListener('keydown', function(e) {
+        //         // Block Ctrl+Shift+I (Inspect)
+        //         if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        //             e.preventDefault();
+        //             showCopyrightNotice();
+        //             return false;
+        //         }
+        //         // Block F12
+        //         if (e.keyCode === 123) {
+        //             e.preventDefault();
+        //             showCopyrightNotice();
+        //             return false;
+        //         }
+        //         // Block Ctrl+Shift+J (Console)
+        //         if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        //             e.preventDefault();
+        //             showCopyrightNotice();
+        //             return false;
+        //         }
+        //         // Block Ctrl+Shift+C (Inspect Element)
+        //         if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+        //             e.preventDefault();
+        //             showCopyrightNotice();
+        //             return false;
+        //         }
+        //     });
 
-            // Optionally: Detect DevTools open by window size heuristics
-            let devtoolsOpen = false;
-            setInterval(function() {
-                const widthThreshold = window.outerWidth - window.innerWidth > 160;
-                const heightThreshold = window.outerHeight - window.innerHeight > 160;
-                if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                    devtoolsOpen = true;
-                    showCopyrightNotice();
-                } else if (!(widthThreshold || heightThreshold)) {
-                    devtoolsOpen = false;
-                }
-            }, 1000);
-        })();
+        //     // Optionally: Detect DevTools open by window size heuristics
+        //     let devtoolsOpen = false;
+        //     setInterval(function() {
+        //         const widthThreshold = window.outerWidth - window.innerWidth > 160;
+        //         const heightThreshold = window.outerHeight - window.innerHeight > 160;
+        //         if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
+        //             devtoolsOpen = true;
+        //             showCopyrightNotice();
+        //         } else if (!(widthThreshold || heightThreshold)) {
+        //             devtoolsOpen = false;
+        //         }
+        //     }, 1000);
+        // })();
 
         // Theme toggle logic
         const themeSwitch = document.getElementById('themeSwitch');
@@ -2921,66 +2921,110 @@
         // New functions for PDF and PNG downloads
         window.jsPDF = window.jspdf.jsPDF; // Initialize jsPDF
 
-        // Store original states of collapsible elements
-        const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean }>
+        // Store original states of collapsible elements and their styles
+        const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
+        const originalContainerStyles = {}; // Store container styles
 
         async function setSectionContentVisibility(targetElement, show) {
-            const collapsibleElements = targetElement.querySelectorAll(
-                '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content'
+            console.log('setSectionContentVisibility called with show:', show); // Debugging log
+
+            const elementsToOverride = targetElement.querySelectorAll(
+                '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
+                '.interactive-element, .firewall-function-card, .limitation-card, .question, .section'
             );
 
-            collapsibleElements.forEach(contentElement => {
-                const parentElement = contentElement.closest(
-                    '.interactive-element, .firewall-function-card, .limitation-card, .question'
-                );
+            // Properties to override for a clean capture
+            const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display'];
 
-                if (show) {
-                    // Save original states if not already saved
-                    if (!originalStates.has(parentElement)) {
-                        originalStates.set(parentElement, {
-                            classes: Array.from(parentElement.classList),
-                            wasOpen: parentElement.classList.contains('open')
-                        });
-                        originalStates.set(contentElement, {
-                            classes: Array.from(contentElement.classList),
-                            wasShow: contentElement.classList.contains('show')
-                        });
+            if (show) {
+                // Save and force show content
+                elementsToOverride.forEach(el => {
+                    const elStyles = new Map();
+                    stylePropsToOverride.forEach(prop => {
+                        elStyles.set(prop, el.style[prop]); // Save current inline style
+                        el.style[prop] = ''; // Clear inline style to let CSS rules apply for max-height/padding/margin
+                    });
+                    originalStates.set(el, {
+                        classes: Array.from(el.classList),
+                        styles: elStyles
+                    });
+
+                    // Force open/show
+                    if (el.classList.contains('interactive-element') || el.classList.contains('firewall-function-card') || el.classList.contains('limitation-card') || el.classList.contains('question')) {
+                        el.classList.add('open');
+                        // Ensure directly affected content is also shown if not already a toggle-content
+                        const content = el.querySelector('.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content');
+                        if (content) content.classList.add('show');
+                    } else if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
+                        el.classList.add('show');
                     }
-                    // Force open and disable transitions
-                    parentElement.classList.add('open');
-                    contentElement.classList.add('show');
-                } else {
-                    // Restore original states
-                    if (originalStates.has(parentElement)) {
-                        const savedParent = originalStates.get(parentElement);
-                        parentElement.className = ''; // Clear existing classes
-                        savedParent.classes.forEach(cls => parentElement.classList.add(cls));
-                        if (!savedParent.wasOpen) {
-                            parentElement.classList.remove('open');
-                        }
+                    
+                    // Temporarily remove conflicting styles that affect html2canvas rendering
+                    el.style.transition = 'none';
+                    el.style.transform = 'none';
+                    el.style.opacity = '1';
+                    if (el.classList.contains('section')) {
+                         el.style.display = 'block'; // Ensure section is displayed if it's currently hidden
                     }
-                    if (originalStates.has(contentElement)) {
-                        const savedContent = originalStates.get(contentElement);
-                        contentElement.className = ''; // Clear existing classes
-                        savedContent.classes.forEach(cls => contentElement.classList.add(cls));
-                        if (!savedContent.wasShow) {
-                            contentElement.classList.remove('show');
-                        }
-                    }
-                    // Clear saved state for the next capture
-                    originalStates.delete(parentElement);
-                    originalStates.delete(contentElement);
+                });
+
+                // Prepare container for full-width screenshot if capturing the whole page or a large section
+                const container = document.querySelector('.container');
+                if (container) {
+                    const containerProps = ['position','width','maxWidth','left','top','zIndex','boxShadow','background','overflow','margin','padding'];
+                    containerProps.forEach(prop => {
+                        originalContainerStyles[prop] = container.style[prop];
+                    });
+                    container.style.position = 'static';
+                    container.style.width = '100vw';
+                    container.style.maxWidth = '100vw';
+                    container.style.left = '0';
+                    container.style.top = '0';
+                    container.style.zIndex = '9999';
+                    container.style.boxShadow = 'none';
+                    container.style.background = getComputedStyle(container).backgroundColor || 'white';
+                    container.style.overflow = 'visible';
+                    container.style.margin = '0';
+                    container.style.padding = '0';
                 }
-            });
+
+            } else {
+                // Restore original states
+                elementsToOverride.forEach(el => {
+                    if (originalStates.has(el)) {
+                        const savedState = originalStates.get(el);
+                        // Restore classes
+                        el.className = ''; // Clear existing classes
+                        savedState.classes.forEach(cls => el.classList.add(cls));
+                        // Restore original inline styles
+                        savedState.styles.forEach((value, prop) => {
+                            el.style[prop] = value;
+                        });
+                    }
+                });
+
+                // Restore container styles
+                const container = document.querySelector('.container');
+                if (container) {
+                    Object.keys(originalContainerStyles).forEach(prop => {
+                        container.style[prop] = originalContainerStyles[prop];
+                    });
+                }
+                originalStates.clear(); // Clear saved states for next capture
+            }
+
             // Apply/remove screenshot-ready class to body (or container) for global styling adjustments
             document.body.classList.toggle('screenshot-ready', show);
-            // For the specific content sections, also apply screenshot-ready
             targetElement.classList.toggle('screenshot-ready', show);
 
-            await new Promise(resolve => setTimeout(200)); // Small delay for DOM updates
+            // Add small delays for DOM updates and rendering after style changes
+            await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
+            await new Promise(r => setTimeout(r, 50)); // Small delay for rendering completion
         }
 
         async function downloadSectionPng(button) {
+            console.log('downloadSectionPng called!'); // Debugging log
+            // alert('downloadSectionPng called!'); // Temporary alert for debugging - REMOVED
             const section = button.closest('.section');
             if (!section) return;
 
@@ -2990,14 +3034,14 @@
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
-            await setSectionContentVisibility(section, true); // Expand all content in section
+            await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
 
             try {
                 const canvas = await html2canvas(section, {
                     backgroundColor: null,
                     useCORS: true,
                     scale: 2,
-                    logging: false,
+                    logging: false, // Set logging to false for production
                     allowTaint: true
                 });
                 const link = document.createElement('a');
@@ -3005,11 +3049,11 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } catch (error) {
-                console.error('Error generating section PNG:', error);
+                console.error('Error generating section PNG:', error); // Keep console.error for actual errors
                 alert('Failed to generate section PNG. Please try again.');
             }
 
-            await setSectionContentVisibility(section, false); // Revert content state
+            await setSectionContentVisibility(section, false); // Revert content state and styles
 
             // Show download buttons and navigation again
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
@@ -3017,6 +3061,8 @@
         }
 
         async function downloadFullPagePdf() {
+            console.log('downloadFullPagePdf called!'); // Debugging log
+            // alert('downloadFullPagePdf called!'); // Temporary alert for debugging - REMOVED
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'pt', 'a4'); // 'p' for portrait, 'pt' for points, 'a4' size
             const margin = 20; // Margin for PDF pages
@@ -3044,10 +3090,10 @@
                 const wasActive = section.classList.contains('active');
                 if (!wasActive) {
                     section.classList.add('active');
-                    await new Promise(resolve => setTimeout(100)); // Short delay for rendering
+                    await new Promise(resolve => setTimeout(50)); // Short delay for rendering
                 }
 
-                // Expand all content within the current section
+                // Expand all content within the current section and prepare styles
                 await setSectionContentVisibility(section, true);
 
                 try {
@@ -3055,8 +3101,9 @@
                         backgroundColor: null,
                         useCORS: true,
                         scale: 2,
-                        logging: false,
-                        allowTaint: true
+                        logging: false, // Set logging to false for production
+                        allowTaint: true,
+                        scrollY: -window.scrollY // Crucial for full page capture in PDF
                     });
 
                     const imgData = canvas.toDataURL('image/png');
@@ -3069,11 +3116,11 @@
                     pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
 
                 } catch (error) {
-                    // console.error(`Error generating PDF for section ${sectionId}:`, error); // Removed console.error for production
+                    console.error(`Error generating PDF for section ${sectionId}:`, error); // Keep console.error for actual errors
                     alert(`Failed to generate PDF for section ${sectionId}. Please try again.`);
                 }
 
-                // Revert content state immediately after capturing the section
+                // Revert content state and styles immediately after capturing the section
                 await setSectionContentVisibility(section, false);
 
                 // Revert active state if it was temporarily added
