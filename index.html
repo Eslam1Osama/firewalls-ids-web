@@ -3103,8 +3103,9 @@
                         scale: 2,
                         logging: false, // Set logging to false for production
                         allowTaint: true,
-                        scrollY: -window.scrollY // Crucial for full page capture in PDF
+                        // Removed scrollY: -window.scrollY as it's for full page capture, not individual sections
                     });
+                    console.log(`[PDF DEBUG] Canvas generated for section ${sectionId}. Dimensions: ${canvas.width}x${canvas.height}`);
 
                     const imgData = canvas.toDataURL('image/png');
                     const imgWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
@@ -3114,10 +3115,11 @@
                         pdf.addPage();
                     }
                     pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+                    console.log(`[PDF DEBUG] Image added to PDF for section ${sectionId}.`);
 
                 } catch (error) {
                     console.error(`Error generating PDF for section ${sectionId}:`, error); // Keep console.error for actual errors
-                    alert(`Failed to generate PDF for section ${sectionId}. Please try again.`);
+                    // alert(`Failed to generate PDF for section ${sectionId}. Please try again.`); // Removed temporary alert
                 }
 
                 // Revert content state and styles immediately after capturing the section
