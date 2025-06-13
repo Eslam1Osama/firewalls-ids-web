@@ -3229,12 +3229,13 @@
                 if (!wasActive) {
                     section.classList.add('active');
                     console.log(`[ZIP DEBUG] Added 'active' class to section ${sectionId}.`);
-                    await new Promise(resolve => setTimeout(50)); // Short delay for rendering
+                    await new Promise(resolve => setTimeout(200)); // Increased delay for rendering
                 }
 
                 // Expand all content within the current section and prepare styles
                 await setSectionContentVisibility(section, true);
                 console.log(`[ZIP DEBUG] Content visibility set to true for section ${sectionId}.`);
+                console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
 
                 try {
                     const canvas = await html2canvas(section, {
