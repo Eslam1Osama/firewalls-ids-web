@@ -3004,6 +3004,34 @@
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
         const originalContainerStyles = {}; // Store container styles
 
+        // Function to preload all images and fonts before html2canvas runs
+        async function preloadAssets() {
+            console.log('[PRELOAD] Starting asset preloading...');
+            const imagePromises = [];
+            document.querySelectorAll('img').forEach(img => {
+                if (img.src && !img.complete) {
+                    imagePromises.push(new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    }));
+                    console.log(`[PRELOAD] Queued image: ${img.src}`);
+                }
+            });
+
+            // Wait for all images to load
+            await Promise.allSettled(imagePromises);
+            console.log('[PRELOAD] All images settled (loaded or failed).');
+
+            // Wait for all fonts to load and be ready
+            try {
+                await document.fonts.ready;
+                console.log('[PRELOAD] All fonts loaded and ready.');
+            } catch (error) {
+                console.warn('[PRELOAD] Error waiting for document.fonts.ready:', error);
+            }
+            console.log('[PRELOAD] Asset preloading complete.');
+        }
+
         async function setSectionContentVisibility(targetElement, show) {
             console.log('setSectionContentVisibility called with show:', show); // Debugging log
 
@@ -3113,6 +3141,7 @@
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
+            await preloadAssets(); // Ensure all assets are loaded
             await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
 
             try {
@@ -3124,8 +3153,8 @@
                     allowTaint: true
                 });
                 const link = document.createElement('a');
-                link.download = section.id + '.png';
-                link.href = canvas.toDataURL('image/png');
+                link.download = section.id + '.jpeg'; // Changed to JPEG
+                link.href = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
                 link.click();
             } catch (error) {
                 console.error('Error generating section PNG:', error); // Keep console.error for actual errors
@@ -3314,6 +3343,8 @@
             const zip = new JSZip();
             let sectionCount = 0;
 
+            await preloadAssets(); // Ensure all assets are loaded
+
             for (const sectionId of sectionsOrder) {
                 const section = document.getElementById(sectionId);
                 if (!section) {
@@ -3381,11 +3412,11 @@
                     });
                     console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                    const imgDataUrl = canvas.toDataURL('image/png');
+                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
                     const imgDataBase64 = imgDataUrl.split(',')[1]; 
                     console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
 
-                    zip.file(`${sectionId}.png`, imgDataBase64, { base64: true });
+                    zip.file(`${sectionId}.jpeg`, imgDataBase64, { base64: true }); // Changed to JPEG
                     console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
 
                 } catch (error) {
