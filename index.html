@@ -3947,14 +3947,17 @@
         }
 
         async function downloadSectionPng(button) {
-            console.log('downloadSectionPng called!'); // Debugging log
-            // alert('downloadSectionPng called!'); // Temporary alert for debugging - REMOVED
-            showLoadingScreen(); // Show loading screen
+            console.log('downloadSectionPng called!');
+            showLoadingScreen();
             const section = button.closest('.section');
             if (!section) {
-                hideLoadingScreen(); // Hide loading screen if section not found
+                hideLoadingScreen();
                 return;
             }
+
+            // Define a unique cache key for this section
+            const cacheKey = `section_image_${section.id}`;
+            let imgDataUrl = localStorage.getItem(cacheKey); // Try to get from cache
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3963,30 +3966,41 @@
             if (nav) nav.classList.add('screenshot-hide');
 
             try {
-                await preloadAssets(); // Ensure all assets are loaded
-                await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
+                if (imgDataUrl) {
+                    console.log(`[CACHE] Image found in cache for section: ${section.id}`);
+                    // Introduce a small delay to make the loading screen visible even for cached items
+                    await new Promise(resolve => setTimeout(resolve, 800)); // Visible for 0.8 seconds
+                } else {
+                    console.log(`[CACHE] Image NOT found in cache for section: ${section.id}, generating...`);
+                    await preloadAssets();
+                    await setSectionContentVisibility(section, true);
 
-                const canvas = await html2canvas(section, {
-                    backgroundColor: null,
-                    useCORS: true,
-                    scale: 2,
-                    logging: false, // Set logging to false for production
-                    allowTaint: true
-                });
+                    const canvas = await html2canvas(section, {
+                        backgroundColor: null,
+                        useCORS: true,
+                        scale: 2,
+                        logging: false,
+                        allowTaint: true
+                    });
+                    imgDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    localStorage.setItem(cacheKey, imgDataUrl);
+                    console.log(`[CACHE] Image generated and saved to cache for section: ${section.id}`);
+                }
+
                 const link = document.createElement('a');
-                link.download = section.id + '.jpeg'; // Changed to JPEG
-                link.href = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
+                link.download = section.id + '.jpeg';
+                link.href = imgDataUrl;
                 link.click();
             } catch (error) {
-                console.error('Error generating section PNG:', error);
-                alert('Failed to generate section PNG. Please try again.');
+                console.error('Error generating or retrieving section PNG:', error); // Updated error message
+                alert('Failed to generate or retrieve section image. Please try again.');
             } finally {
-                await setSectionContentVisibility(section, false); // Revert content state and styles
+                await setSectionContentVisibility(section, false);
 
                 // Show download buttons and navigation again
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
                 if (nav) nav.classList.remove('screenshot-hide');
-                hideLoadingScreen(); // Hide loading screen
+                hideLoadingScreen();
             }
         }
 
