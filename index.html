@@ -210,12 +210,6 @@
             text-align: left;
         }
 
-        .section-title::before {
-            content: "\1F50D"; /* Magnifying Glass */
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
         .image-placeholder {
             width: 100%;
             max-width: 800px;
@@ -647,9 +641,6 @@
                 padding: 20px 15px; /* Adjust card padding */
                 margin-bottom: 25px; /* Adjust card margin */
             }
-            .subsection-title {
-                font-size: clamp(1.2em, 3.5vw, 1.5em); /* Fluid font size */
-            }
             .info-network-row {
                 flex-direction: column; /* Stack info blocks */
                 gap: 15px;
@@ -670,9 +661,6 @@
             }
             .header p {
                 font-size: clamp(0.9em, 2.5vw, 0.95em);
-            }
-            .section-title {
-                font-size: clamp(1.0em, 3.5vw, 1.0em);
             }
             .rsa-section h3, .review-questions h3 {
                 font-size: clamp(0.9em, 3vw, 0.95em);
@@ -718,9 +706,6 @@
             }
             .header p {
                 font-size: clamp(0.75em, 2vw, 0.85em);
-            }
-            .section-title {
-                font-size: clamp(0.85em, 3vw, 0.95em);
             }
             .rsa-section h3, .review-questions h3 {
                 font-size: clamp(0.8em, 2.8vw, 0.85em);
@@ -1133,12 +1118,6 @@
             border-bottom: 2px solid var(--secondary);
             display: flex;
             align-items: center;
-        }
-
-        .subsection-title::before {
-            content: "\1F50D"; /* Magnifying Glass */
-            margin-right: 10px;
-            font-size: 1.2em;
         }
 
         .definition-box {
@@ -1939,12 +1918,6 @@
             align-items: center;
         }
 
-        .subsection-title::before {
-            content: "\1F50D"; /* Magnifying Glass */
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
         .definition-box {
             background: var(--blue2);
             border-radius: 10px;
@@ -2663,7 +2636,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-bullseye"></i> Security Objectives</h2>
+            <h2 class="section-title">Security Objectives</h2>
             <div class="definition-box">
                 <p>Before diving into firewalls and IDS, it's crucial to understand the fundamental goals of information security:</p>
             </div>
@@ -2690,7 +2663,7 @@
                 </div>
             </div>
             <div class="info-vs-network-container">
-                <h3 class="subsection-title"><i class="fas fa-globe"></i> Information Security vs Network Security</h3>
+                <h3 class="subsection-title">Information Security vs Network Security</h3>
                 <div class="info-network-row">
                     <div class="info-block info-block-info">
                         <h4><i class="fas fa-info-circle"></i> Information Security</h4>
@@ -2709,7 +2682,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-fire"></i> Firewalls</h2>
+            <h2 class="section-title">Firewalls</h2>
             
             <div class="subsection" style="margin-bottom: 0px;">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -2869,7 +2842,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-network-wired"></i> Types of Firewalls</h2>
+            <h2 class="section-title">Types of Firewalls</h2>
             
             <div class="subsection">
                 <div class="firewall-types">
@@ -3049,7 +3022,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-chess-board"></i> Demilitarized Zone (DMZ) Networks</h2>
+            <h2 class="section-title">Demilitarized Zone (DMZ) Networks</h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -3126,7 +3099,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-eye"></i> Intrusion Detection Systems (IDS)</h2>
+            <h2 class="section-title">Intrusion Detection Systems (IDS)</h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -3308,7 +3281,7 @@
             <button class="download-section-btn" onclick="downloadSectionPng(this)">
                 <i class="fas fa-download"></i>
             </button>
-            <h2 class="section-title"><i class="fas fa-question-circle"></i> Review Questions</h2>
+            <h2 class="section-title">Review Questions</h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
