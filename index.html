@@ -1,5 +1,3 @@
-<4!>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1789,6 +1787,65 @@
             }
         }
 
+        /* Loading Screen Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 50, 61, 0.6); /* Semi-transparent dark blue */
+            backdrop-filter: blur(8px); /* Frosted glass effect */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999; /* On top of everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            border: 8px solid rgba(255, 255, 255, 0.2);
+            border-top: 8px solid var(--accent); /* Accent color for spinner */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .loading-spinner {
+                width: 45px;
+                height: 45px;
+                border-width: 6px;
+            }
+            .loading-text {
+                font-size: 1.2em;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -2822,6 +2879,16 @@
             setTimeout(showCopyrightNotice, 1000);
         });
 
+        // TEMPORARY: Show loading screen on page load for debugging
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded: Attempting to show loading screen for test.');
+            showLoadingScreen('Testing loading screen visibility...');
+            setTimeout(() => {
+                hideLoadingScreen();
+                console.log('Loading screen test completed.');
+            }, 3000); // Hide after 3 seconds
+        });
+
         // Retain all original interactive logic for navigation, toggles, and quiz
         // Navigation functionality
         function showSection(sectionId) {
@@ -3004,9 +3071,24 @@
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
         const originalContainerStyles = {}; // Store container styles
 
+        // Helper functions for loading screen
+        function showLoadingScreen(message) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = message;
+            loadingOverlay.classList.add('show');
+        }
+
+        function hideLoadingScreen() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('show');
+        }
+
         // Function to preload all images and fonts before html2canvas runs
         async function preloadAssets() {
             console.log('[PRELOAD] Starting asset preloading...');
+            showLoadingScreen('Preloading assets for capture...'); // Show message during asset preloading
+            // Removed hideLoadingScreen() from here. The calling function will hide it.
             const imagePromises = [];
             document.querySelectorAll('img').forEach(img => {
                 if (img.src && !img.complete) {
@@ -3131,9 +3213,13 @@
 
         async function downloadSectionPng(button) {
             console.log('downloadSectionPng called!'); // Debugging log
-            // alert('downloadSectionPng called!'); // Temporary alert for debugging - REMOVED
+            showLoadingScreen('Preparing your image...'); // Show loading screen
+
             const section = button.closest('.section');
-            if (!section) return;
+            if (!section) {
+                hideLoadingScreen(); // Hide loading screen on early exit
+                return;
+            }
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3159,18 +3245,19 @@
             } catch (error) {
                 console.error('Error generating section PNG:', error); // Keep console.error for actual errors
                 alert('Failed to generate section PNG. Please try again.');
+            } finally {
+                await setSectionContentVisibility(section, false); // Revert content state and styles
+
+                // Show download buttons and navigation again
+                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+                if (nav) nav.classList.remove('screenshot-hide');
+                hideLoadingScreen(); // Ensure loading screen is hidden
             }
-
-            await setSectionContentVisibility(section, false); // Revert content state and styles
-
-            // Show download buttons and navigation again
-            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-            if (nav) nav.classList.remove('screenshot-hide');
         }
 
         async function downloadFullPageDocx() {
             console.log('downloadFullPageDocx called!'); // Debugging log
-            // alert('Download Word button clicked!'); // Bomb-proof alert for initial debugging
+            showLoadingScreen('Preparing your document...'); // Show loading screen for DOCX
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3193,114 +3280,121 @@
             });
             console.log('[DOCX DEBUG] docx.Document initialized.');
 
-            for (const sectionId of sectionsOrder) {
-                const section = document.getElementById(sectionId);
-                if (!section) {
-                    console.warn(`[DOCX DEBUG] Section ${sectionId} not found, skipping.`);
-                    continue;
-                }
-                console.log(`[DOCX DEBUG] Processing section: ${sectionId}`);
-
-                // Temporarily make the section active if it's not, to ensure it renders for html2canvas
-                const wasActive = section.classList.contains('active');
-                if (!wasActive) {
-                    section.classList.add('active');
-                    console.log(`[DOCX DEBUG] Added 'active' class to section ${sectionId}.`);
-                    await new Promise(resolve => setTimeout(50)); // Short delay for rendering
-                }
-
-                // Expand all content within the current section and prepare styles
-                await setSectionContentVisibility(section, true);
-                console.log(`[DOCX DEBUG] Content visibility set to true for section ${sectionId}.`);
-
-                try {
-                    const canvas = await html2canvas(section, {
-                        backgroundColor: null,
-                        useCORS: true,
-                        scale: 2,
-                        logging: true, // Enable html2canvas logging for debugging
-                        allowTaint: true,
-                    });
-                    console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
-
-                    const imgDataUrl = canvas.toDataURL('image/png');
-                    const imgData = imgDataUrl.split(',')[1]; // Get base64 part
-                    console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
-
-                    // Calculate image dimensions to fit within a standard A4 page (approx)
-                    const maxDocxWidthPx = 500; 
-                    const maxDocxHeightPx = 700; 
-                    
-                    let imgWidth = canvas.width;
-                    let imgHeight = canvas.height;
-
-                    // Scale image to fit within A4 landscape/portrait, preserving aspect ratio
-                    if (imgWidth > maxDocxWidthPx) {
-                        imgHeight = (imgHeight * maxDocxWidthPx) / imgWidth;
-                        imgWidth = maxDocxWidthPx;
+            try {
+                for (const sectionId of sectionsOrder) {
+                    const section = document.getElementById(sectionId);
+                    if (!section) {
+                        console.warn(`[DOCX DEBUG] Section ${sectionId} not found, skipping.`);
+                        continue;
                     }
-                    if (imgHeight > maxDocxHeightPx) {
-                        imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
-                        imgHeight = maxDocxHeightPx;
+                    console.log(`[DOCX DEBUG] Processing section: ${sectionId}`);
+
+                    // Temporarily make the section active if it's not, to ensure it renders for html2canvas
+                    const wasActive = section.classList.contains('active');
+                    if (!wasActive) {
+                        section.classList.add('active');
+                        console.log(`[DOCX DEBUG] Added 'active' class to section ${sectionId}.`);
+                        await new Promise(resolve => setTimeout(50)); // Short delay for rendering
                     }
-                    console.log(`[DOCX DEBUG] Image dimensions for section ${sectionId}: ${imgWidth}x${imgHeight}`);
 
-                    doc.addSection({
-                        children: [
-                            new Paragraph({
-                                children: [
-                                    new ImageRun({
-                                        data: imgData,
-                                        transformation: {
-                                            width: imgWidth,
-                                            height: imgHeight,
-                                        },
-                                    }),
-                                ],
-                            }),
-                            new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
-                        ],
-                    });
-                    console.log(`[DOCX DEBUG] Section added to DOCX document for ${sectionId}.`);
+                    // Expand all content within the current section and prepare styles
+                    await setSectionContentVisibility(section, true);
+                    console.log(`[DOCX DEBUG] Content visibility set to true for section ${sectionId}.`);
 
-                } catch (error) {
-                    console.error(`[DOCX ERROR] Error during canvas generation or section addition for ${sectionId}:`, error);
-                    alert(`Failed to generate Word document for section ${sectionId}. Please try again and check console for errors.`);
+                    try {
+                        const canvas = await html2canvas(section, {
+                            backgroundColor: null,
+                            useCORS: true,
+                            scale: 2,
+                            logging: true, // Enable html2canvas logging for debugging
+                            allowTaint: true,
+                        });
+                        console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+
+                        const imgDataUrl = canvas.toDataURL('image/png');
+                        const imgData = imgDataUrl.split(',')[1]; // Get base64 part
+                        console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
+
+                        // Calculate image dimensions to fit within a standard A4 page (approx)
+                        const maxDocxWidthPx = 500; 
+                        const maxDocxHeightPx = 700; 
+                        
+                        let imgWidth = canvas.width;
+                        let imgHeight = canvas.height;
+
+                        // Scale image to fit within A4 landscape/portrait, preserving aspect ratio
+                        if (imgWidth > maxDocxWidthPx) {
+                            imgHeight = (imgHeight * maxDocxWidthPx) / imgWidth;
+                            imgWidth = maxDocxWidthPx;
+                        }
+                        if (imgHeight > maxDocxHeightPx) {
+                            imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
+                            imgHeight = maxDocxHeightPx;
+                        }
+                        console.log(`[DOCX DEBUG] Image dimensions for section ${sectionId}: ${imgWidth}x${imgHeight}`);
+
+                        doc.addSection({
+                            children: [
+                                new Paragraph({
+                                    children: [
+                                        new ImageRun({
+                                            data: imgData,
+                                            transformation: {
+                                                width: imgWidth,
+                                                height: imgHeight,
+                                            },
+                                        }),
+                                    ],
+                                }),
+                                new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
+                            ],
+                        });
+                        console.log(`[DOCX DEBUG] Section added to DOCX document for ${sectionId}.`);
+
+                    } catch (error) {
+                        console.error(`[DOCX ERROR] Error during canvas generation or section addition for ${sectionId}:`, error);
+                        alert(`Failed to generate Word document for section ${sectionId}. Please try again and check console for errors.`);
+                    } finally {
+                        // Revert content state and styles immediately after capturing the section
+                        await setSectionContentVisibility(section, false);
+                        console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
+
+                        // Revert active state if it was temporarily added
+                        if (!wasActive) {
+                            section.classList.remove('active');
+                            console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
+                        }
+                    }
                 }
+                console.log('[DOCX DEBUG] All sections processed. Attempting to pack document.');
 
-                // Revert content state and styles immediately after capturing the section
-                await setSectionContentVisibility(section, false);
-                console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
+                // Generate and save the DOCX file
+                Packer.toBlob(doc).then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'Data_Security_Module.docx';
+                    link.click();
+                    console.log('[DOCX DEBUG] Word document generated and downloaded!');
+                }).catch(error => {
+                    console.error('[DOCX ERROR] Error packing Word document:', error);
+                    alert('Failed to create Word document. Please try again and check console for errors.');
+                });
 
-                // Revert active state if it was temporarily added
-                if (!wasActive) {
-                    section.classList.remove('active');
-                    console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
-                }
+            } catch (overallError) {
+                console.error('[DOCX ERROR] Overall error in downloadFullPageDocx:', overallError);
+                alert('An unexpected error occurred during DOCX generation. Please try again.');
+            } finally {
+                // Show download buttons and navigation again
+                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+                if (nav) nav.classList.remove('screenshot-hide');
+                hideLoadingScreen(); // Ensure loading screen is hidden
+                console.log('[DOCX DEBUG] Download buttons and navigation shown again.');
             }
-            console.log('[DOCX DEBUG] All sections processed. Attempting to pack document.');
-
-            // Generate and save the DOCX file
-            Packer.toBlob(doc).then(blob => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'Data_Security_Module.docx';
-                link.click();
-                console.log('[DOCX DEBUG] Word document generated and downloaded!');
-            }).catch(error => {
-                console.error('[DOCX ERROR] Error packing Word document:', error);
-                alert('Failed to create Word document. Please try again and check console for errors.');
-            });
-
-            // Show download buttons and navigation again
-            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-            if (nav) nav.classList.remove('screenshot-hide');
-            console.log('[DOCX DEBUG] Download buttons and navigation shown again.');
         }
 
         async function downloadFullPageZip() {
             console.log('downloadFullPageZip called!'); // Debugging log
-            // alert('Download ZIP button clicked!'); // For immediate feedback
+            showLoadingScreen('Preparing your zip file...'); // Show loading screen
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3345,147 +3439,141 @@
 
             await preloadAssets(); // Ensure all assets are loaded
 
-            for (const sectionId of sectionsOrder) {
-                const section = document.getElementById(sectionId);
-                if (!section) {
-                    console.warn(`[ZIP DEBUG] Section ${sectionId} not found, skipping.`);
-                    continue;
-                }
-                console.log(`[ZIP DEBUG] Processing section: ${sectionId}`);
-                sectionCount++;
-
-                // Store original section styles and apply temporary styles for capture
-                const originalSectionDisplay = section.style.display;
-                const originalSectionOverflow = section.style.overflow;
-                const originalSectionTransition = section.style.transition;
-                section.style.display = 'block'; // Ensure section is visible
-                section.style.overflow = 'visible'; // Ensure content is not clipped
-                section.style.transition = 'none'; // Disable transitions during capture
-                section.classList.add('screenshot-ready'); // Add screenshot-ready to current section
-
-                // Store original states of collapsible elements within THIS section and force open/show
-                const elementsToOverride = section.querySelectorAll(
-                    '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
-                    '.interactive-element, .firewall-function-card, .limitation-card, .question'
-                );
-                const savedElementStates = new Map(); // Map<element, { classes: string[], styles: Map<string, string> }>
-                const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display', 'overflow'];
-
-                elementsToOverride.forEach(el => {
-                    const elStyles = new Map();
-                    stylePropsToOverride.forEach(prop => {
-                        elStyles.set(prop, el.style[prop]); // Save current inline style
-                        el.style[prop] = ''; // Clear inline style first to let CSS rules apply
-                    });
-                    savedElementStates.set(el, {
-                        classes: Array.from(el.classList),
-                        styles: elStyles
-                    });
-
-                    // Force open/show
-                    el.classList.add('open');
-                    el.classList.add('show');
-                    el.style.transition = 'none';
-                    el.style.transform = 'none';
-                    el.style.opacity = '1';
-                    el.style.maxHeight = '20000px'; // Ensure content is fully visible
-                    el.style.overflow = 'visible';
-
-                    // For content divs, ensure padding and margin are applied for layout
-                    if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
-                        el.style.paddingTop = '10px';
-                        el.style.marginTop = '10px';
+            try {
+                for (const sectionId of sectionsOrder) {
+                    const section = document.getElementById(sectionId);
+                    if (!section) {
+                        console.warn(`[ZIP DEBUG] Section ${sectionId} not found, skipping.`);
+                        continue;
                     }
-                });
-                await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
-                await new Promise(r => setTimeout(r, 200)); // Increased delay for rendering completion after style changes
+                    console.log(`[ZIP DEBUG] Processing section: ${sectionId}`);
+                    sectionCount++;
 
-                console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
+                    // Store original section styles and apply temporary styles for capture
+                    const originalSectionDisplay = section.style.display;
+                    const originalSectionOverflow = section.style.overflow;
+                    const originalSectionTransition = section.style.transition;
+                    section.style.display = 'block'; // Ensure section is visible
+                    section.style.overflow = 'visible'; // Ensure content is not clipped
+                    section.style.transition = 'none'; // Disable transitions during capture
+                    section.classList.add('screenshot-ready'); // Add screenshot-ready to current section
 
-                try {
-                    const canvas = await html2canvas(section, {
-                        backgroundColor: null,
-                        useCORS: true,
-                        scale: 2,
-                        logging: true,
-                        allowTaint: true,
-                    });
-                    console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+                    // Store original states of collapsible elements within THIS section and force open/show
+                    const elementsToOverride = section.querySelectorAll(
+                        '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
+                        '.interactive-element, .firewall-function-card, .limitation-card, .question'
+                    );
+                    const savedElementStates = new Map(); // Map<element, { classes: string[], styles: Map<string, string> }>
+                    const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display', 'overflow'];
 
-                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
-                    const imgDataBase64 = imgDataUrl.split(',')[1]; 
-                    console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
-
-                    zip.file(`${sectionId}.jpeg`, imgDataBase64, { base64: true }); // Changed to JPEG
-                    console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
-
-                } catch (error) {
-                    console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
-                    alert(`Failed to capture section ${sectionId} for ZIP. Please check console for errors.`);
-                } finally {
-                    // Restore original section styles
-                    section.style.display = originalSectionDisplay;
-                    section.style.overflow = originalSectionOverflow;
-                    section.style.transition = originalSectionTransition;
-                    section.classList.remove('screenshot-ready'); // Remove screenshot-ready from current section
-
-                    // Restore original states of collapsible elements within THIS section
                     elementsToOverride.forEach(el => {
-                        if (savedElementStates.has(el)) {
-                            const savedState = savedElementStates.get(el);
-                            // Restore classes
-                            el.className = ''; // Clear existing classes
-                            savedState.classes.forEach(cls => el.classList.add(cls));
-                            // Restore original inline styles
-                            savedState.styles.forEach((value, prop) => {
-                                el.style[prop] = value;
-                            });
+                        const elStyles = new Map();
+                        stylePropsToOverride.forEach(prop => {
+                            elStyles.set(prop, el.style[prop]); // Save current inline style
+                            el.style[prop] = ''; // Clear inline style first to let CSS rules apply
+                        });
+                        savedElementStates.set(el, {
+                            classes: Array.from(el.classList),
+                            styles: elStyles
+                        });
+
+                        // Force open/show
+                        el.classList.add('open');
+                        el.classList.add('show');
+                        el.style.transition = 'none';
+                        el.style.transform = 'none';
+                        el.style.opacity = '1';
+                        el.style.maxHeight = '20000px'; // Ensure content is fully visible
+                        el.style.overflow = 'visible';
+
+                        // For content divs, ensure padding and margin are applied for layout
+                        if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
+                            el.style.paddingTop = '10px';
+                            el.style.marginTop = '10px';
                         }
                     });
-                    console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
-                }
-            }
+                    
+                    await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
+                    await new Promise(r => setTimeout(r, 200)); // Increased delay for rendering completion after style changes
 
-            console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP.');
-            if (sectionCount === 0) {
-                // alert('No sections found to download. Please ensure sections have correct IDs.');
-                console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
-                // Show download buttons and navigation again even if no sections
+                    console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
+
+                    try {
+                        const canvas = await html2canvas(section, {
+                            backgroundColor: null,
+                            useCORS: true,
+                            scale: 2,
+                            logging: true,
+                            allowTaint: true,
+                        });
+                        console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+
+                        const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
+                        const imgDataBase64 = imgDataUrl.split(',')[1]; 
+                        console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
+
+                        zip.file(`${sectionId}.jpeg`, imgDataBase64, { base64: true }); // Changed to JPEG
+                        console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
+
+                    } catch (error) {
+                        console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
+                        alert(`Failed to capture section ${sectionId} for ZIP. Please check console for errors.`);
+                    } finally {
+                        // Restore original section styles
+                        section.style.display = originalSectionDisplay;
+                        section.style.overflow = originalSectionOverflow;
+                        section.style.transition = originalSectionTransition;
+                        section.classList.remove('screenshot-ready'); // Remove screenshot-ready from current section
+
+                        // Restore original states of collapsible elements within THIS section
+                        elementsToOverride.forEach(el => {
+                            if (savedElementStates.has(el)) {
+                                const savedState = savedElementStates.get(el);
+                                // Restore classes
+                                el.className = ''; // Clear existing classes
+                                savedState.classes.forEach(cls => el.classList.add(cls));
+                                // Restore original inline styles
+                                savedState.styles.forEach((value, prop) => {
+                                    el.style[prop] = value;
+                                });
+                            }
+                        });
+                        console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
+                    }
+                }
+
+                console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP.');
+                if (sectionCount === 0) {
+                    console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
+                    throw new Error('No sections found to download.'); // Propagate error to outer catch
+                }
+
+                // Generate and save the ZIP file
+                const blob = await zip.generateAsync({ type: 'blob' });
+                saveAs(blob, 'Data_Security_Module_Sections.zip');
+                console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
+
+            } catch (overallError) {
+                console.error('[ZIP ERROR] Overall error in downloadFullPageZip:', overallError);
+                alert('An unexpected error occurred during ZIP generation. Please try again.');
+            } finally {
+                // Show download buttons and navigation again
+                const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+                const nav = document.querySelector('.navigation');
                 if (nav) nav.classList.remove('screenshot-hide');
-                // Restore container styles if no sections were processed
+                
+                // Restore global body and container styles
+                document.body.classList.remove('screenshot-ready');
+                const container = document.querySelector('.container');
                 if (container) {
                     Object.keys(originalContainerStyles).forEach(prop => {
                         container.style[prop] = originalContainerStyles[prop];
                     });
                     container.classList.remove('screenshot-ready');
                 }
-                document.body.classList.remove('screenshot-ready');
-                return;
-            }
-
-            // Generate and save the ZIP file
-            zip.generateAsync({ type: 'blob' }).then(function (blob) {
-                saveAs(blob, 'Data_Security_Module_Sections.zip');
-                console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
-                // alert('ZIP file downloaded successfully!');
-            }).catch(error => {
-                console.error('[ZIP ERROR] Error generating or saving ZIP file:', error);
-                alert('Failed to create or download ZIP file. Please check console for errors.');
-            });
-
-            // Show download buttons and navigation again
-            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-            if (nav) nav.classList.remove('screenshot-hide');
-            console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
-            
-            // Restore global body and container styles
-            document.body.classList.remove('screenshot-ready');
-            if (container) {
-                Object.keys(originalContainerStyles).forEach(prop => {
-                    container.style[prop] = originalContainerStyles[prop];
-                });
-                container.classList.remove('screenshot-ready');
+                hideLoadingScreen(); // Ensure loading screen is hidden
+                console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
             }
         }
 
@@ -3514,6 +3602,11 @@
             <p>This content is protected by copyright law. Unauthorized copying, distribution, or use of this material is strictly prohibited. The code, design, and content of this educational module are the exclusive property of the creator. Any reproduction or distribution without express written permission is a violation of copyright law.</p>
             <p class="disclaimer">This module is provided for educational purposes only. The creator makes no warranties about the completeness, reliability, or accuracy of this information.</p>
         </div>
+    </div>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText"></div>
     </div>
 </body>
 </html>
