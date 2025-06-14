@@ -1723,26 +1723,32 @@
             width: 100%;
             padding: 12px 20px;
             border-radius: 25px;
-            border: 2px solid var(--primary);
-            background: var(--nav-bg);
+            border: 1px solid var(--blue1); /* Softer border */
+            background: var(--section-bg); /* Cohesive with other elements */
             color: var(--text-main);
             font-size: 1em;
             font-weight: 500;
             cursor: pointer;
-            appearance: none; /* Remove default select styles */
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300ACC1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
+            /* Updated SVG to use currentColor for fill, making it theme-adaptive */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
             background-repeat: no-repeat;
             background-position: right 15px center;
             background-size: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow); /* Consistent shadow */
             transition: var(--transition);
         }
 
         .nav-dropdown:hover {
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             transform: translateY(-1px);
+        }
+
+        .nav-dropdown:focus {
+            outline: none; /* Remove default outline */
+            box-shadow: 0 0 0 3px var(--accent), var(--shadow); /* Attractive focus ring */
         }
 
         .nav-dropdown option {
@@ -2521,26 +2527,32 @@
             width: 100%;
             padding: 12px 20px;
             border-radius: 25px;
-            border: 2px solid var(--primary);
-            background: var(--nav-bg);
+            border: 1px solid var(--blue1); /* Softer border */
+            background: var(--section-bg); /* Cohesive with other elements */
             color: var(--text-main);
             font-size: 1em;
             font-weight: 500;
             cursor: pointer;
-            appearance: none; /* Remove default select styles */
+            appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300ACC1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
+            /* Updated SVG to use currentColor for fill, making it theme-adaptive */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
             background-repeat: no-repeat;
             background-position: right 15px center;
             background-size: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow); /* Consistent shadow */
             transition: var(--transition);
         }
 
         .nav-dropdown:hover {
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             transform: translateY(-1px);
+        }
+
+        .nav-dropdown:focus {
+            outline: none; /* Remove default outline */
+            box-shadow: 0 0 0 3px var(--accent), var(--shadow); /* Attractive focus ring */
         }
 
         .nav-dropdown option {
