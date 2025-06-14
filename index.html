@@ -74,13 +74,15 @@
             text-align: center;
             color: var(--text-main);
             margin-bottom: 30px;
-            padding: 40px 20px;
+            padding: 40px 20px; /* Base padding */
             background: var(--header-bg);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
-            position: relative;
+            position: relative; /* Restored for theme-toggle positioning */
             overflow: hidden;
+            padding-top: 60px; /* Add extra space at the top for the toggle */
+            /* Ensure NO 'display: flex', 'flex-direction', or 'align-items' here */
         }
 
         .header::before {
@@ -851,6 +853,7 @@
             z-index: 10;
             display: flex;
             align-items: center;
+            /* Ensure NO 'margin-left: auto;' or 'left' property here */
         }
         .toggle-switch {
             width: 56px;
@@ -861,7 +864,7 @@
             cursor: pointer;
             transition: background 0.3s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-left: 10px;
+            margin-left: 10px; /* Keep for toggle elements within switch */
         }
         .toggle-slider {
             position: absolute;
@@ -1732,6 +1735,58 @@
             opacity: 0 !important; /* Hide arrows during capture */
         }
 
+        /* Add new styles for navigation dropdown */
+        .nav-dropdown-container {
+            display: none; /* Hidden by default */
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .nav-dropdown {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid var(--primary);
+            background: var(--nav-bg);
+            color: var(--text-main);
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            appearance: none; /* Remove default select styles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300ACC1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .nav-dropdown:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .nav-dropdown option {
+            background: var(--nav-bg);
+            color: var(--text-main);
+            padding: 10px;
+        }
+
+        /* Responsive adjustments for navigation */
+        @media (max-width: 768px) {
+            .nav-buttons {
+                display: none; /* Hide original buttons */
+            }
+            .nav-dropdown-container {
+                display: block; /* Show dropdown */
+            }
+            .navigation {
+                padding: 10px; /* Adjust padding for dropdown */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -1781,6 +1836,17 @@
                 <button class="nav-btn" data-section="quiz">
                     <i class="fas fa-question-circle"></i> Review Questions
                 </button>
+            </div>
+            <!-- New dropdown for small screens -->
+            <div class="nav-dropdown-container">
+                <select id="navDropdown" class="nav-dropdown">
+                    <option value="objectives">Security Objectives</option>
+                    <option value="firewalls">Firewalls</option>
+                    <option value="firewall-types">Firewall Types</option>
+                    <option value="dmz">DMZ Networks</option>
+                    <option value="ids">Intrusion Detection</option>
+                    <option value="quiz">Review Questions</option>
+                </select>
             </div>
         </div>
 
@@ -2103,16 +2169,16 @@
                             <div class="pros" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: var(--primary); font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> Advantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>High security</strong> -- understands app-level threats</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can <strong>analyze data deeply</strong> (like URLs, keywords, file types)</li>
-                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can <strong>enforce policies</strong> (e.g., block certain sites, limit uploads)</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> High security -- understands app-level threats</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can analyze data deeply (like URLs, keywords, file types)</li>
+                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can enforce policies (e.g., block certain sites, limit uploads)</li>
                                 </ul>
                             </div>
                             <div class="cons" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: #E57373; font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> Disadvantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Slower than other firewalls because of <strong>deep inspection</strong></li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> More <strong>complex to set up and manage</strong></li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Slower than other firewalls because of deep inspection</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> More complex to set up and manage</li>
                                     <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Not suitable for untrusted external communications</li>
                                 </ul>
                             </div>
@@ -2152,16 +2218,16 @@
                             <div class="pros" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: var(--primary); font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> Advantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>Faster</strong> than deep-inspection firewalls</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>Low resource use</strong> -- doesn't slow down the network</li>
-                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Simple setup, <strong>ideal for trusted internal users</strong></li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Faster than deep-inspection firewalls</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Low resource use -- doesn't slow down the network</li>
+                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Simple setup, ideal for trusted internal users</li>
                                 </ul>
                             </div>
                             <div class="cons" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: #E57373; font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> Disadvantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> <strong>Doesn't inspect data</strong> -- can't detect malware or harmful content</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> <strong>Not suitable</strong> for untrusted external communications</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Doesn't inspect data -- can't detect malware or harmful content</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Not suitable for untrusted external communications</li>
                                 </ul>
                             </div>
                         </div>
@@ -2828,6 +2894,14 @@
             });
             // Initialize progress bar
             updateProgressBar();
+
+            // Handle navigation dropdown change
+            const navDropdown = document.getElementById('navDropdown');
+            if (navDropdown) {
+                navDropdown.addEventListener('change', function() {
+                    showSection(this.value);
+                });
+            }
         });
 
         // Interactive Firewalls Functions
