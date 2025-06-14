@@ -211,7 +211,7 @@
         }
 
         .section-title::before {
-            content: "🔐";
+            content: "\1F50D"; /* Magnifying Glass */
             margin-right: 10px;
             font-size: 1.2em;
         }
@@ -1136,7 +1136,7 @@
         }
 
         .subsection-title::before {
-            content: "🔐";
+            content: "\1F50D"; /* Magnifying Glass */
             margin-right: 10px;
             font-size: 1.2em;
         }
@@ -1788,42 +1788,46 @@
         }
 
         /* Loading Screen Styles */
-        .loading-overlay {
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 50, 61, 0.8) 0%, rgba(0, 105, 120, 0.8) 100%); /* Deeper, more vibrant gradient */
-            backdrop-filter: blur(12px) brightness(0.8); /* Stronger blur and slight darkening */
-            -webkit-backdrop-filter: blur(12px) brightness(0.8); /* Safari support */
+            background: rgba(224, 247, 250, 0.8); /* Adjusted to var(--blue2) with higher transparency */
+            backdrop-filter: blur(10px); /* Increased blur for more glassy effect */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 99999;
+            z-index: 9999;
+            color: var(--text-main); /* Keep text color for contrast */
+            font-size: 1.5em;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.6s ease-out, visibility 0.6s ease-out; /* Slower, smoother transition */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .loading-overlay.show {
+        .loading-screen.show {
             opacity: 1;
             visibility: visible;
         }
 
         .loading-spinner {
-            border: 8px solid rgba(255, 255, 255, 0.3); /* Slightly brighter border */
-            border-top: 8px solid var(--accent); /* Accent color for spinner */
-            border-right: 8px solid var(--primary); /* Primary color for second part of spinner */
-            border-bottom: 8px solid var(--secondary); /* Secondary color for third part */
-            border-left: 8px solid var(--accent); /* Accent for fourth, to complete gradient effect */
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid var(--primary); /* Stays with primary color */
             border-radius: 50%;
-            width: 70px; /* Slightly larger */
-            height: 70px; /* Slightly larger */
-            animation: spin 1.5s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite, /* Slower, smoother spin */
-                         fade-in-out 3s ease-in-out infinite alternate;
-            margin-bottom: 25px; /* More spacing */
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2em; /* Increased size */
+            font-weight: bold; /* Made bold */
+            color: var(--text-main); /* Ensure text color fits the palette */
+            text-shadow: 0 0 8px rgba(0,0,0,0.4); /* Slightly stronger shadow */
         }
 
         @keyframes spin {
@@ -1831,41 +1835,759 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes fade-in-out {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
+        /* End Loading Screen Styles */
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: -400px; /* Start off-screen */
+            background: var(--section-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            max-width: 380px;
+            z-index: 1000;
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .loading-text {
-            color: white;
-            font-size: 1.8em; /* Larger, more prominent text */
+        .notification.show {
+            left: 20px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
             font-weight: bold;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow for pop */
-            text-align: center;
-            letter-spacing: 0.05em; /* Slightly spaced out letters */
-            animation: pulse 2s ease-in-out infinite alternate;
+            color: var(--primary);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.9; }
-            100% { transform: scale(1.02); opacity: 1; }
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+            transition: var(--transition);
         }
 
-        @media (max-width: 600px) {
-            .loading-spinner {
-                width: 55px;
-                height: 55px;
-                border-width: 7px;
+        .notification-close:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        .notification-content {
+            color: var(--text-main);
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .notification-content p {
+            margin: 8px 0;
+        }
+
+        .notification-content .disclaimer {
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .notification {
+                max-width: calc(100% - 40px);
+                left: -100%;
             }
-            .loading-text {
-                font-size: 1.4em;
+        }
+
+        .objectives-container {
+            background: var(--section-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        .subsection-title {
+            color: var(--primary);
+            font-size: clamp(1.2em, 3.5vw, 1.5em); /* Fluid font size */
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .subsection-title::before {
+            content: "\1F50D"; /* Magnifying Glass */
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .definition-box {
+            background: var(--blue2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        .objectives-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .objective-card {
+            background: var(--primary);
+            color: var(--section-bg);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: left;
+            word-break: break-word;
+        }
+        [data-theme="dark"] .objective-card {
+            background: var(--secondary);
+            color: var(--blue3);
+        }
+
+        .objective-card h4 {
+            font-size: clamp(1.1em, 2.5vw, 1.2em); /* Fluid font size */
+            margin-bottom: 10px;
+            color: var(--accent);
+            text-align: left;
+        }
+
+        .objective-card p {
+            font-size: clamp(0.9em, 1.8vw, 1em); /* Fluid font size */
+            line-height: 1.6;
+            opacity: 0.95;
+            color: inherit;
+            text-align: left;
+        }
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0; /* Set to 0 when collapsed */
+            padding: 0; /* Set to 0 when collapsed */
+            background: var(--blue3);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: max-height 0.3s ease-out, margin-top 0.3s ease-out, padding 0.3s ease-out;
+        }
+        /* Reset margins/paddings for direct children when collapsed */
+        .toggle-content:not(.show) > * {
+            margin: 0 !important;
+            padding: 0 !important;
+            transition: margin 0.3s ease-out, padding 0.3s ease-out; /* Add transition for children's spacing */
+        }
+
+        .toggle-content strong {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        .toggle-content.show {
+            max-height: 2000px; /* A large value to ensure content fits */
+            margin-top: 10px; /* Apply margin when open */
+            padding: 10px; /* Apply padding when open */
+        }
+
+        .info-vs-network-container {
+            background: var(--blue1);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            color: var(--text-main);
+            text-align: left;
+            margin-top: 32px;
+        }
+
+        .info-network-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .info-block {
+            flex: 1;
+            background: var(--blue2);
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--text-main);
+            text-align: left;
+            word-break: break-word;
+        }
+        [data-theme="dark"] .info-block {
+            background: var(--blue3);
+            color: var(--text-main);
+        }
+
+        .info-block h4 {
+            font-size: clamp(1em, 2vw, 1.1em); /* Fluid font size */
+            margin-bottom: 5px;
+            color: var(--secondary);
+            text-align: left;
+        }
+
+        .info-block p {
+            font-size: clamp(0.85em, 1.7vw, 0.95em); /* Fluid font size */
+            line-height: 1.6;
+            opacity: 0.95;
+            color: inherit;
+            text-align: left;
+        }
+
+        .info-block .key-term {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .firewall-functions-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .firewall-function-card {
+            background: linear-gradient(135deg, var(--section-bg) 80%, var(--blue2) 100%);
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            padding: 22px 20px 14px 20px;
+            color: var(--text-main);
+            position: relative;
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+            min-height: 110px;
+            text-align: left;
+            border-left: 5px solid var(--primary);
+            overflow: hidden;
+        }
+        [data-theme="dark"] .firewall-function-card {
+            background: linear-gradient(135deg, var(--blue3) 80%, var(--blue2) 100%);
+            color: var(--text-main);
+            border-left: 5px solid var(--secondary);
+        }
+        .firewall-function-card:hover, .firewall-function-card.open {
+            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+            transform: translateY(-2px) scale(1.01);
+        }
+        .function-title {
+            font-size: clamp(1.05em, 2.2vw, 1.18em); /* Fluid font size */
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary);
+            margin-bottom: 0;
+            user-select: none;
+            letter-spacing: 0.01em;
+        }
+        [data-theme="dark"] .function-title {
+            color: var(--secondary);
+        }
+        .function-arrow {
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.3s;
+            color: var(--primary);
+            font-size: 1.18em;
+            display: flex;
+            align-items: center;
+        }
+        [data-theme="dark"] .function-arrow {
+            color: var(--secondary);
+        }
+        .firewall-function-card:hover .function-arrow,
+        .firewall-function-card.open .function-arrow {
+            opacity: 1;
+        }
+        .firewall-function-card.open .function-arrow i {
+            transform: rotate(180deg);
+            transition: transform 0.3s;
+        }
+        .function-content {
+            max-height: 0;
+            overflow: hidden;
+            margin-top: 0;
+            padding: 0;
+            color: var(--text-main);
+            font-size: clamp(0.9em, 1.8vw, 1.04em); /* Fluid font size */
+            line-height: 1.7;
+            word-break: break-word;
+            transition: max-height 0.5s ease-out, margin-top 0.5s ease-out, padding 0.5s ease-out; /* Updated transition to include unified padding */
+        }
+        /* Reset margins/paddings for direct children when collapsed */
+        .firewall-function-card:not(.open) > .function-content > * {
+            margin: 0 !important;
+            padding: 0 !important;
+            transition: margin 0.5s ease-out, padding 0.5s ease-out; /* Add transition for children's spacing */
+        }
+
+        [data-theme="dark"] .function-content {
+            color: var(--text-main);
+        }
+        .function-content ul, .function-content ol {
+            margin: 10px 0 10px 22px;
+            padding-left: 0;
+            color: var(--text-main);
+            font-size: clamp(0.9em, 1.7vw, 0.98em); /* Fluid font size */
+            line-height: 1.6;
+        }
+        .function-content li {
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+        .function-content strong {
+            color: var(--primary);
+        }
+        [data-theme="dark"] .function-content strong {
+            color: var(--secondary);
+        }
+        .function-content .key-term {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .firewall-function-card .function-content {
+            pointer-events: auto;
+        }
+        .firewall-function-card.open > .function-content {
+            max-height: 2000px; /* A value larger than content will ever be */
+            margin-top: 16px; /* Apply margin when open */
+            padding: 10px; /* Apply unified padding when open */
+        }
+
+        /* CSS for the above sections */
+        .firewall-goals-container {
+          background: var(--section-bg);
+          border-radius: 15px;
+          box-shadow: var(--shadow);
+          padding: 24px 20px 20px 20px;
+          margin-bottom: 28px;
+          color: var(--text-main);
+        }
+        [data-theme="dark"] .firewall-goals-container {
+          background: var(--blue3);
+          color: var(--text-main);
+        }
+        .goals-header {
+          font-size: clamp(1.1em, 2.2vw, 1.25em); /* Fluid font size */
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        [data-theme="dark"] .goals-header {
+          color: var(--secondary);
+        }
+        .goals-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .goal {
+          font-size: clamp(1em, 2vw, 1.08em); /* Fluid font size */
+          font-weight: bold;
+          margin-bottom: 8px;
+          padding: 10px 16px;
+          border-radius: 8px;
+          color: var(--section-bg);
+          background: var(--primary);
+        }
+        .goal-2 { background: var(--secondary); color: var(--text-main); }
+        .goal-3 { background: var(--accent); color: var(--text-main); }
+        .goal-desc { font-weight: normal; display: block; margin-top: 2px; font-size: clamp(0.9em, 1.7vw, 0.98em); }
+
+        .firewall-techniques-container {
+          background: var(--section-bg);
+          border-radius: 15px;
+          box-shadow: var(--shadow);
+          padding: 24px 20px 20px 20px;
+          margin-bottom: 28px;
+          color: var(--text-main);
+        }
+        [data-theme="dark"] .firewall-techniques-container {
+          background: var(--blue3);
+          color: var(--text-main);
+        }
+        .techniques-header {
+          font-size: clamp(1.1em, 2.2vw, 1.25em); /* Fluid font size */
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        [data-theme="dark"] .techniques-header {
+          color: var(--secondary);
+        }
+        .techniques-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 18px;
+        }
+        .technique-card {
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          padding: 16px 14px 12px 14px;
+          color: var(--text-main);
+          background: var(--blue2);
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          min-height: 90px;
+        }
+        [data-theme="dark"] .technique-card {
+          background: var(--blue1);
+          color: var(--text-main);
+        }
+        .technique-service { border-left: 5px solid #4caf50; }
+        .technique-direction { border-left: 5px solid #ff9800; }
+        .technique-user { border-left: 5px solid #2196f3; }
+        .technique-behavior { border-left: 5px solid #e91e63; }
+        .technique-title {
+          font-size: clamp(1em, 2vw, 1.08em); /* Fluid font size */
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 2px;
+        }
+        .technique-desc {
+          font-size: clamp(0.9em, 1.7vw, 0.98em); /* Fluid font size */
+          line-height: 1.5;
+        }
+
+        .firewall-limitations-container {
+          background: var(--section-bg);
+          border-radius: 15px;
+          box-shadow: var(--shadow);
+          padding: 24px 20px 20px 20px;
+          margin-bottom: 28px;
+          color: var(--text-main);
+        }
+        [data-theme="dark"] .firewall-limitations-container {
+          background: var(--blue3);
+          color: var(--text-main);
+        }
+        .limitations-header {
+          font-size: clamp(1.1em, 2.2vw, 1.25em); /* Fluid font size */
+          font-weight: bold;
+          color: var(--primary);
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        [data-theme="dark"] .limitations-header {
+          color: var(--secondary);
+        }
+        .limitations-list {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .limitation-card {
+          background: linear-gradient(90deg, #ffb6b6 60%, #ffd6d6 100%);
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          padding: 16px 14px 12px 14px;
+          color: #b71c1c;
+          font-weight: bold;
+          cursor: pointer;
+          position: relative;
+          transition: box-shadow 0.2s, transform 0.2s;
+          min-height: 48px;
+          text-align: left;
+        }
+        [data-theme="dark"] .limitation-card {
+          background: linear-gradient(90deg, #b71c1c 60%, #ffb6b6 100%);
+          color: var(--section-bg);
+        }
+        .limitation-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: clamp(1em, 2vw, 1.08em); /* Fluid font size */
+          font-weight: bold;
+          user-select: none;
+        }
+        .limitation-arrow {
+          margin-left: auto;
+          opacity: 0.7;
+          color: inherit;
+          font-size: 1.1em;
+          display: flex;
+          align-items: center;
+          transition: transform 0.3s;
+        }
+        .limitation-card.open .limitation-arrow i {
+          transform: rotate(180deg);
+        }
+        .limitation-content {
+          display: none;
+          margin-top: 10px;
+          color: inherit;
+          font-size: clamp(0.9em, 1.7vw, 0.98em); /* Fluid font size */
+          font-weight: normal;
+          line-height: 1.5;
+        }
+        .limitation-card.open .limitation-content {
+          display: block;
+          animation: fadeIn 0.3s;
+        }
+        /* Add this to CSS for uniform goal color */
+        .goal-uniform {
+          background: var(--primary) !important;
+          color: var(--section-bg) !important;
+        }
+        [data-theme="dark"] .goal-uniform {
+          background: var(--primary) !important;
+          color: var(--section-bg) !important;
+        }
+
+        /* New styles for interactive element arrows */
+        .interactive-element h4 {
+            position: relative; /* Ensure position for absolute arrow */
+        }
+        .toggle-arrow {
+            margin-left: auto; /* Push arrow to the right */
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.3s;
+            color: inherit; /* Inherit color from parent h4 */
+            font-size: 1em; /* Adjust size if needed */
+            display: flex;
+            align-items: center;
+        }
+        .interactive-element:hover .toggle-arrow {
+            opacity: 1; /* Make arrow more visible on hover */
+        }
+        .interactive-element.open .toggle-arrow i {
+            transform: rotate(180deg);
+        }
+        .firewall-function-card.open {
+            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+            transform: translateY(-2px) scale(1.01);
+        }
+        /* New style for metric-card in IDS section */
+        .metric-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 16px 14px 12px 14px;
+            color: var(--text-main);
+            background: var(--blue2);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 90px;
+        }
+        [data-theme="dark"] .metric-card {
+            background: var(--blue1);
+            color: var(--text-main);
+        }
+        /* Adjustments for quiz-question cards to match firewall-card */
+        .quiz-question .interactive-element {
+            cursor: pointer; /* Keep cursor on the interactive element */
+            transition: all 0.3s ease; /* Smooth transition for interactivity */
+        }
+        .quiz-question {
+            background: var(--section-bg); /* Match firewall-card background */
+            color: var(--text-main); /* Match firewall-card text color */
+            box-shadow: var(--shadow); /* Use global shadow variable */
+            border-radius: 15px; /* Match firewall-card border-radius */
+            padding: 24px 20px 20px 20px; /* Match firewall-card padding */
+            margin: 0; /* Remove margin as grid gap will handle spacing */
+            transition: all 0.3s ease; /* Add transition for hover effects */
+            position: relative; /* For proper positioning of children */
+            display: flex; /* Flexbox for internal layout */
+            flex-direction: column; /* Stack children vertically */
+        }
+        /* Remove existing .question class styles that are now redundant or moved */
+        .question {
+            background: none; /* Remove background */
+            color: inherit; /* Inherit color */
+            padding: 0; /* Remove padding */
+            margin: 0; /* Remove margin */
+            border-radius: 0; /* Remove border-radius */
+            box-shadow: none; /* Remove box-shadow */
+            cursor: default; /* Reset cursor */
+            transition: none; /* Remove transition */
+        }
+        .question-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            width: 100%; /* Ensure it takes full width */
+        }
+        .quiz-question .interactive-element h3 {
+            color: var(--primary);
+            font-size: clamp(1.05em, 2.2vw, 1.15em); /* Fluid font size */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0px; /* Ensure no extra margin */
+            width: 100%; /* Ensure it takes full width */
+        }
+
+        .quiz-question .interactive-element .toggle-arrow {
+            margin-left: auto; /* Push arrow to the right */
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.3s;
+            color: inherit; /* Inherit color from parent h3 */
+            font-size: 1em; /* Adjust size if needed */
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz-question .interactive-element:hover .toggle-arrow {
+            opacity: 1; /* Make arrow more visible on hover */
+        }
+
+        .quiz-question .interactive-element.open .toggle-arrow i {
+            transform: rotate(180deg);
+        }
+
+        .quiz-question .toggle-content ol,
+        .quiz-question .toggle-content ul {
+            list-style-type: decimal; /* Default for ol */
+            padding-left: 20px;
+            margin-left: 0;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            font-size: clamp(0.85em, 1.7vw, 0.98em); /* Fluid font size */
+            line-height: 1.5;
+            font-weight: normal;
+            color: var(--text-secondary); /* Ensure text color is visible */
+        }
+
+        .quiz-question .toggle-content ul {
+            list-style-type: disc; /* Override for ul */
+        }
+
+        .quiz-question .toggle-content li {
+            margin-bottom: 8px; /* Consistent spacing */
+            line-height: 1.6;
+        }
+        /* New style for screenshot-ready */
+        .screenshot-ready .toggle-content,
+        .screenshot-ready .function-content,
+        .screenshot-ready .limitation-content,
+        .screenshot-ready .question-answer {
+            max-height: 20000px !important; /* Extremely large value to ensure all content is visible */
+            overflow: visible !important;
+            margin-top: 10px !important;
+            padding: 10px !important;
+            transition: none !important; /* Disable transitions during capture */
+            display: block !important;
+        }
+
+        .screenshot-ready .interactive-element,
+        .screenshot-ready .firewall-function-card,
+        .screenshot-ready .limitation-card,
+        .screenshot-ready .question {
+            /* Ensure these parent containers are also visible and don't hide content */
+            overflow: visible !important;
+        }
+
+        .screenshot-ready .interactive-element.open .toggle-arrow i,
+        .screenshot-ready .firewall-function-card.open .function-arrow i,
+        .screenshot-ready .limitation-card.open .limitation-arrow i {
+            transform: rotate(0deg) !important; /* Reset arrow rotation for consistent look */
+        }
+
+        .screenshot-ready .toggle-arrow,
+        .screenshot-ready .function-arrow,
+        .screenshot-ready .limitation-arrow {
+            opacity: 0 !important; /* Hide arrows during capture */
+        }
+
+        /* Add new styles for navigation dropdown */
+        .nav-dropdown-container {
+            display: none; /* Hidden by default */
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .nav-dropdown {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid var(--primary);
+            background: var(--nav-bg);
+            color: var(--text-main);
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            appearance: none; /* Remove default select styles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300ACC1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .nav-dropdown:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .nav-dropdown option {
+            background: var(--nav-bg);
+            color: var(--text-main);
+            padding: 10px;
+        }
+
+        /* Responsive adjustments for navigation */
+        @media (max-width: 768px) {
+            .nav-buttons {
+                display: none; /* Hide original buttons */
+            }
+            .nav-dropdown-container {
+                display: block; /* Show dropdown */
+            }
+            .navigation {
+                padding: 10px; /* Adjust padding for dropdown */
             }
         }
 
     </style>
 </head>
 <body>
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Preparing your image...</p>
+    </div>
     <div class="container">
         <div class="header">
             <div class="theme-toggle">
@@ -2896,16 +3618,6 @@
             setTimeout(showCopyrightNotice, 1000);
         });
 
-        // TEMPORARY: Show loading screen on page load for debugging
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     console.log('DOMContentLoaded: Attempting to show loading screen for test.');
-        //     showLoadingScreen('Testing loading screen visibility...');
-        //     setTimeout(() => {
-        //         hideLoadingScreen();
-        //         console.log('Loading screen test completed.');
-        //     }, 3000); // Hide after 3 seconds
-        // });
-
         // Retain all original interactive logic for navigation, toggles, and quiz
         // Navigation functionality
         function showSection(sectionId) {
@@ -3084,32 +3796,24 @@
         // New functions for PDF and PNG downloads
         // Removed window.jsPDF = window.jspdf.jsPDF; // Initialize jsPDF
 
+        // Loading Screen functions
+        const loadingScreen = document.getElementById('loadingScreen');
+
+        function showLoadingScreen() {
+            loadingScreen.classList.add('show');
+        }
+
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('show');
+        }
+
         // Store original states of collapsible elements and their styles
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
         const originalContainerStyles = {}; // Store container styles
 
-        // Add a simple cache for generated content
-        let cachedPngBlob = null;
-        let cachedZipBlob = null;
-
-        // Helper functions for loading screen
-        function showLoadingScreen(message) {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const loadingText = document.getElementById('loadingText');
-            loadingText.textContent = message;
-            loadingOverlay.classList.add('show');
-        }
-
-        function hideLoadingScreen() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            loadingOverlay.classList.remove('show');
-        }
-
         // Function to preload all images and fonts before html2canvas runs
         async function preloadAssets() {
             console.log('[PRELOAD] Starting asset preloading...');
-            showLoadingScreen('Preloading assets for capture...'); // Show message during asset preloading
-            // Removed hideLoadingScreen() from here. The calling function will hide it.
             const imagePromises = [];
             document.querySelectorAll('img').forEach(img => {
                 if (img.src && !img.complete) {
@@ -3234,20 +3938,11 @@
 
         async function downloadSectionPng(button) {
             console.log('downloadSectionPng called!'); // Debugging log
-            
-            if (cachedPngBlob) {
-                showLoadingScreen('Downloading from cache...');
-                await new Promise(r => setTimeout(500)); // Simulate a small delay for user feedback
-                saveAs(cachedPngBlob, 'section.jpeg'); // Use section.jpeg as a generic name for now
-                hideLoadingScreen();
-                return;
-            }
-
-            showLoadingScreen('Preparing your image...'); // Show loading screen
-
+            // alert('downloadSectionPng called!'); // Temporary alert for debugging - REMOVED
+            showLoadingScreen(); // Show loading screen
             const section = button.closest('.section');
             if (!section) {
-                hideLoadingScreen(); // Hide loading screen on early exit
+                hideLoadingScreen(); // Hide loading screen if section not found
                 return;
             }
 
@@ -3257,10 +3952,10 @@
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
-            await preloadAssets(); // Ensure all assets are loaded
-            await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
-
             try {
+                await preloadAssets(); // Ensure all assets are loaded
+                await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
+
                 const canvas = await html2canvas(section, {
                     backgroundColor: null,
                     useCORS: true,
@@ -3268,17 +3963,12 @@
                     logging: false, // Set logging to false for production
                     allowTaint: true
                 });
-                canvas.toBlob(function(blob) {
-                    if (blob) {
-                        cachedPngBlob = blob;
-                        saveAs(blob, section.id + '.jpeg');
-                    } else {
-                        console.error("Error: Blob is null in toBlob callback.");
-                        alert("Failed to generate image. Blob is null.");
-                    }
-                }, 'image/jpeg', 0.9);
+                const link = document.createElement('a');
+                link.download = section.id + '.jpeg'; // Changed to JPEG
+                link.href = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
+                link.click();
             } catch (error) {
-                console.error('Error generating section PNG:', error); // Keep console.error for actual errors
+                console.error('Error generating section PNG:', error);
                 alert('Failed to generate section PNG. Please try again.');
             } finally {
                 await setSectionContentVisibility(section, false); // Revert content state and styles
@@ -3286,13 +3976,14 @@
                 // Show download buttons and navigation again
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
                 if (nav) nav.classList.remove('screenshot-hide');
-                hideLoadingScreen(); // Ensure loading screen is hidden
+                hideLoadingScreen(); // Hide loading screen
             }
         }
 
         async function downloadFullPageDocx() {
             console.log('downloadFullPageDocx called!'); // Debugging log
-            showLoadingScreen('Preparing your document...'); // Show loading screen for DOCX
+            // alert('Download Word button clicked!'); // Bomb-proof alert for initial debugging
+            showLoadingScreen(); // Show loading screen
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3336,69 +4027,63 @@
                     await setSectionContentVisibility(section, true);
                     console.log(`[DOCX DEBUG] Content visibility set to true for section ${sectionId}.`);
 
-                    try {
-                        const canvas = await html2canvas(section, {
-                            backgroundColor: null,
-                            useCORS: true,
-                            scale: 2,
-                            logging: true, // Enable html2canvas logging for debugging
-                            allowTaint: true,
-                        });
-                        console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+                    const canvas = await html2canvas(section, {
+                        backgroundColor: null,
+                        useCORS: true,
+                        scale: 2,
+                        logging: true, // Enable html2canvas logging for debugging
+                        allowTaint: true,
+                    });
+                    console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                        const imgDataUrl = canvas.toDataURL('image/png');
-                        const imgData = imgDataUrl.split(',')[1]; // Get base64 part
-                        console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
+                    const imgDataUrl = canvas.toDataURL('image/png');
+                    const imgData = imgDataUrl.split(',')[1]; // Get base64 part
+                    console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
 
-                        // Calculate image dimensions to fit within a standard A4 page (approx)
-                        const maxDocxWidthPx = 500; 
-                        const maxDocxHeightPx = 700; 
-                        
-                        let imgWidth = canvas.width;
-                        let imgHeight = canvas.height;
+                    // Calculate image dimensions to fit within a standard A4 page (approx)
+                    const maxDocxWidthPx = 500; 
+                    const maxDocxHeightPx = 700; 
+                    
+                    let imgWidth = canvas.width;
+                    let imgHeight = canvas.height;
 
-                        // Scale image to fit within A4 landscape/portrait, preserving aspect ratio
-                        if (imgWidth > maxDocxWidthPx) {
-                            imgHeight = (imgHeight * maxDocxWidthPx) / imgWidth;
-                            imgWidth = maxDocxWidthPx;
-                        }
-                        if (imgHeight > maxDocxHeightPx) {
-                            imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
-                            imgHeight = maxDocxHeightPx;
-                        }
-                        console.log(`[DOCX DEBUG] Image dimensions for section ${sectionId}: ${imgWidth}x${imgHeight}`);
+                    // Scale image to fit within A4 landscape/portrait, preserving aspect ratio
+                    if (imgWidth > maxDocxWidthPx) {
+                        imgHeight = (imgHeight * maxDocxWidthPx) / imgWidth;
+                        imgWidth = maxDocxWidthPx;
+                    }
+                    if (imgHeight > maxDocxHeightPx) {
+                        imgWidth = (imgWidth * maxDocxHeightPx) / imgHeight;
+                        imgHeight = maxDocxHeightPx;
+                    }
+                    console.log(`[DOCX DEBUG] Image dimensions for section ${sectionId}: ${imgWidth}x${imgHeight}`);
 
-                        doc.addSection({
-                            children: [
-                                new Paragraph({
-                                    children: [
-                                        new ImageRun({
-                                            data: imgData,
-                                            transformation: {
-                                                width: imgWidth,
-                                                height: imgHeight,
-                                            },
-                                        }),
-                                    ],
-                                }),
-                                new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
-                            ],
-                        });
-                        console.log(`[DOCX DEBUG] Section added to DOCX document for ${sectionId}.`);
+                    doc.addSection({
+                        children: [
+                            new Paragraph({
+                                children: [
+                                    new ImageRun({
+                                        data: imgData,
+                                        transformation: {
+                                            width: imgWidth,
+                                            height: imgHeight,
+                                        },
+                                    }),
+                                ],
+                            }),
+                            new Paragraph({ text: "", pageBreakBefore: true }), // New page for the next section
+                        ],
+                    });
+                    console.log(`[DOCX DEBUG] Section added to DOCX document for ${sectionId}.`);
 
-                    } catch (error) {
-                        console.error(`[DOCX ERROR] Error during canvas generation or section addition for ${sectionId}:`, error);
-                        alert(`Failed to generate Word document for section ${sectionId}. Please try again and check console for errors.`);
-                    } finally {
-                        // Revert content state and styles immediately after capturing the section
-                        await setSectionContentVisibility(section, false);
-                        console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
+                    // Revert content state and styles immediately after capturing the section
+                    await setSectionContentVisibility(section, false);
+                    console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
 
-                        // Revert active state if it was temporarily added
-                        if (!wasActive) {
-                            section.classList.remove('active');
-                            console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
-                        }
+                    // Revert active state if it was temporarily added
+                    if (!wasActive) {
+                        section.classList.remove('active');
+                        console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
                     }
                 }
                 console.log('[DOCX DEBUG] All sections processed. Attempting to pack document.');
@@ -3410,35 +4095,23 @@
                     link.download = 'Data_Security_Module.docx';
                     link.click();
                     console.log('[DOCX DEBUG] Word document generated and downloaded!');
-                }).catch(error => {
-                    console.error('[DOCX ERROR] Error packing Word document:', error);
-                    alert('Failed to create Word document. Please try again and check console for errors.');
-                });
-
-            } catch (overallError) {
-                console.error('[DOCX ERROR] Overall error in downloadFullPageDocx:', overallError);
-                alert('An unexpected error occurred during DOCX generation. Please try again.');
+                })
+            } catch (error) {
+                console.error('[DOCX ERROR] Error packing Word document:', error);
+                alert('Failed to create Word document. Please try again and check console for errors.');
             } finally {
                 // Show download buttons and navigation again
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
                 if (nav) nav.classList.remove('screenshot-hide');
-                hideLoadingScreen(); // Ensure loading screen is hidden
                 console.log('[DOCX DEBUG] Download buttons and navigation shown again.');
+                hideLoadingScreen(); // Hide loading screen
             }
         }
 
         async function downloadFullPageZip() {
             console.log('downloadFullPageZip called!'); // Debugging log
-            
-            if (cachedZipBlob) {
-                showLoadingScreen('Downloading from cache...');
-                await new Promise(r => setTimeout(500)); // Simulate a small delay for user feedback
-                saveAs(cachedZipBlob, 'Data_Security_Module_Sections.zip');
-                hideLoadingScreen();
-                return;
-            }
-
-            showLoadingScreen('Preparing your zip file...'); // Show loading screen
+            // alert('Download ZIP button clicked!'); // For immediate feedback
+            showLoadingScreen(); // Show loading screen
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3481,9 +4154,9 @@
             const zip = new JSZip();
             let sectionCount = 0;
 
-            await preloadAssets(); // Ensure all assets are loaded
-
             try {
+                await preloadAssets(); // Ensure all assets are loaded
+
                 for (const sectionId of sectionsOrder) {
                     const section = document.getElementById(sectionId);
                     if (!section) {
@@ -3536,89 +4209,80 @@
                             el.style.marginTop = '10px';
                         }
                     });
-                    
                     await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
                     await new Promise(r => setTimeout(r, 200)); // Increased delay for rendering completion after style changes
 
                     console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
 
-                    try {
-                        const canvas = await html2canvas(section, {
-                            backgroundColor: null,
-                            useCORS: true,
-                            scale: 2,
-                            logging: true,
-                            allowTaint: true,
-                        });
-                        console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
+                    const canvas = await html2canvas(section, {
+                        backgroundColor: null,
+                        useCORS: true,
+                        scale: 2,
+                        logging: true,
+                        allowTaint: true,
+                    });
+                    console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                        const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
-                        const imgDataBase64 = imgDataUrl.split(',')[1]; 
-                        console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
+                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
+                    const imgDataBase64 = imgDataUrl.split(',')[1]; 
+                    console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
 
-                        zip.file(`${sectionId}.jpeg`, imgDataBase64, { base64: true }); // Changed to JPEG
-                        console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
+                    zip.file(`${sectionId}.jpeg`, imgDataBase64, { base64: true }); // Changed to JPEG
+                    console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
 
-                    } catch (error) {
-                        console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
-                        alert(`Failed to capture section ${sectionId} for ZIP. Please check console for errors.`);
-                    } finally {
-                        // Restore original section styles
-                        section.style.display = originalSectionDisplay;
-                        section.style.overflow = originalSectionOverflow;
-                        section.style.transition = originalSectionTransition;
-                        section.classList.remove('screenshot-ready'); // Remove screenshot-ready from current section
+                    // Restore original section styles
+                    section.style.display = originalSectionDisplay;
+                    section.style.overflow = originalSectionOverflow;
+                    section.style.transition = originalSectionTransition;
+                    section.classList.remove('screenshot-ready'); // Remove screenshot-ready from current section
 
-                        // Restore original states of collapsible elements within THIS section
-                        elementsToOverride.forEach(el => {
-                            if (savedElementStates.has(el)) {
-                                const savedState = savedElementStates.get(el);
-                                // Restore classes
-                                el.className = ''; // Clear existing classes
-                                savedState.classes.forEach(cls => el.classList.add(cls));
-                                // Restore original inline styles
-                                savedState.styles.forEach((value, prop) => {
-                                    el.style[prop] = value;
-                                });
-                            }
-                        });
-                        console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
-                    }
+                    // Restore original states of collapsible elements within THIS section
+                    elementsToOverride.forEach(el => {
+                        if (savedElementStates.has(el)) {
+                            const savedState = savedElementStates.get(el);
+                            // Restore classes
+                            el.className = ''; // Clear existing classes
+                            savedState.classes.forEach(cls => el.classList.add(cls));
+                            // Restore original inline styles
+                            savedState.styles.forEach((value, prop) => {
+                                el.style[prop] = value;
+                            });
+                        }
+                    });
+                    console.log(`[ZIP DEBUG] Content visibility reverted for section ${sectionId}.`);
                 }
 
                 console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP.');
                 if (sectionCount === 0) {
+                    // alert('No sections found to download. Please ensure sections have correct IDs.');
                     console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
-                    throw new Error('No sections found to download.'); // Propagate error to outer catch
+                    return;
                 }
 
                 // Generate and save the ZIP file
-                const blob = await zip.generateAsync({ type: 'blob' });
-                saveAs(blob, 'Data_Security_Module_Sections.zip');
-                cachedZipBlob = blob; // Cache the generated blob
-                console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
-
-            } catch (overallError) {
-                console.error('[ZIP ERROR] Overall error in downloadFullPageZip:', overallError);
-                alert('An unexpected error occurred during ZIP generation. Please try again.');
+                zip.generateAsync({ type: 'blob' }).then(function (blob) {
+                    saveAs(blob, 'Data_Security_Module_Sections.zip');
+                    console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
+                    // alert('ZIP file downloaded successfully!');
+                })
+            } catch (error) {
+                console.error('[ZIP ERROR] Error generating or saving ZIP file:', error);
+                alert('Failed to create or download ZIP file. Please check console for errors.');
             } finally {
                 // Show download buttons and navigation again
-                const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-                const nav = document.querySelector('.navigation');
                 if (nav) nav.classList.remove('screenshot-hide');
+                console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
                 
                 // Restore global body and container styles
                 document.body.classList.remove('screenshot-ready');
-                const container = document.querySelector('.container');
                 if (container) {
                     Object.keys(originalContainerStyles).forEach(prop => {
                         container.style[prop] = originalContainerStyles[prop];
                     });
                     container.classList.remove('screenshot-ready');
                 }
-                hideLoadingScreen(); // Ensure loading screen is hidden
-                console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
+                hideLoadingScreen(); // Hide loading screen
             }
         }
 
@@ -3647,11 +4311,6 @@
             <p>This content is protected by copyright law. Unauthorized copying, distribution, or use of this material is strictly prohibited. The code, design, and content of this educational module are the exclusive property of the creator. Any reproduction or distribution without express written permission is a violation of copyright law.</p>
             <p class="disclaimer">This module is provided for educational purposes only. The creator makes no warranties about the completeness, reliability, or accuracy of this information.</p>
         </div>
-    </div>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText"></div>
     </div>
 </body>
 </html>
