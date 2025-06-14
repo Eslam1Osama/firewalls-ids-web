@@ -3094,11 +3094,11 @@
 
             const elementsToOverride = targetElement.querySelectorAll(
                 '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
-                '.interactive-element, .firewall-function-card, .limitation-card, .question, .section'
+                '.interactive-element, .firewall-function-card, .limitation-card, .question'
             );
 
             // Properties to override for a clean capture
-            const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display'];
+            const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display', 'overflow']; // Added overflow
 
             if (show) {
                 // Save and force show content
@@ -3116,77 +3116,51 @@
                     // Force open/show
                     if (el.classList.contains('interactive-element') || el.classList.contains('firewall-function-card') || el.classList.contains('limitation-card') || el.classList.contains('question')) {
                         el.classList.add('open');
-                        // Ensure directly affected content is also shown if not already a toggle-content
-                        const content = el.querySelector('.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content');
-                        if (content) content.classList.add('show');
-                    } else if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
-                        el.classList.add('show');
                     }
-                    
+                    el.classList.add('show'); // Apply show to content and interactive elements directly
+
                     // Temporarily remove conflicting styles that affect html2canvas rendering
                     el.style.transition = 'none';
                     el.style.transform = 'none';
                     el.style.opacity = '1';
-                    if (el.classList.contains('section')) {
-                         el.style.display = 'block'; // Ensure section is displayed if it's currently hidden
+                    el.style.maxHeight = '20000px'; // Ensure content is fully visible
+                    el.style.overflow = 'visible';
+
+                    // For content divs, ensure padding and margin are applied for layout
+                    if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
+                        el.style.paddingTop = '10px';
+                        el.style.marginTop = '10px';
                     }
                 });
 
-                // Prepare container for full-width screenshot if capturing the whole page or a large section
-                const container = document.querySelector('.container');
-                if (container) {
-                    const containerProps = ['position','width','maxWidth','left','top','zIndex','boxShadow','background','overflow','margin','padding'];
-                    containerProps.forEach(prop => {
-                        originalContainerStyles[prop] = container.style[prop];
-                    });
-                    container.style.position = 'static';
-                    container.style.width = '100vw';
-                    container.style.maxWidth = '100vw';
-                    container.style.left = '0';
-                    container.style.top = '0';
-                    container.style.zIndex = '9999';
-                    container.style.boxShadow = 'none';
-                    container.style.background = getComputedStyle(container).backgroundColor || 'white';
-                    container.style.overflow = 'visible';
-                    container.style.margin = '0';
-                    container.style.padding = '0';
-                }
+                // Apply screenshot-ready to the targetElement itself, not globally to body/container here
+                targetElement.classList.add('screenshot-ready');
+                targetElement.style.display = 'block'; // Ensure the section itself is displayed
+                targetElement.style.overflow = 'visible'; // Ensure content is not clipped
 
             } else {
                 // Restore original states
                 elementsToOverride.forEach(el => {
                     if (originalStates.has(el)) {
                         const savedState = originalStates.get(el);
-                        // Restore classes
                         el.className = ''; // Clear existing classes
                         savedState.classes.forEach(cls => el.classList.add(cls));
-                        // Restore original inline styles
                         savedState.styles.forEach((value, prop) => {
                             el.style[prop] = value;
                         });
                     }
                 });
+                originalStates.clear();
 
-                // Restore container styles
-                const container = document.querySelector('.container');
-                if (container) {
-                    Object.keys(originalContainerStyles).forEach(prop => {
-                        container.style[prop] = originalContainerStyles[prop];
-                    });
-                }
-                originalStates.clear(); // Clear saved states for next capture
+                // Remove screenshot-ready from the targetElement itself
+                targetElement.classList.remove('screenshot-ready');
+                // Don't revert targetElement.style.display or overflow here, as it's handled by getOrCreateSectionImage's `wasActive` logic
             }
 
-            // Apply/remove screenshot-ready class to body (or container) for global styling adjustments
-            document.body.classList.toggle('screenshot-ready', show);
-            targetElement.classList.toggle('screenshot-ready', show);
-
-            // Add small delays for DOM updates and rendering after style changes
-            await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
-            await new Promise(r => setTimeout(r, 50)); // Small delay for rendering completion
+            await new Promise(r => requestAnimationFrame(r));
+            await new Promise(r => setTimeout(r, 50));
         }
 
-        // New function to get or create a cached section image
         async function getOrCreateSectionImage(sectionId) {
             if (preRenderedSectionImages.has(sectionId)) {
                 console.log(`[CACHE] Returning cached image for section: ${sectionId}`);
@@ -3200,14 +3174,14 @@
                 return null;
             }
 
-            // Temporarily make the section active if it's not, to ensure it renders for html2canvas
             const wasActive = section.classList.contains('active');
             if (!wasActive) {
                 section.classList.add('active');
-                await new Promise(resolve => setTimeout(50)); // Short delay for rendering
+                await new Promise(resolve => setTimeout(50));
             }
 
-            await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
+            // Call setSectionContentVisibility only for this specific section
+            await setSectionContentVisibility(section, true);
 
             let imageData = null;
             try {
@@ -3223,7 +3197,7 @@
             } catch (error) {
                 console.error(`[CACHE ERROR] Error generating canvas for section ${sectionId}:`, error);
             } finally {
-                await setSectionContentVisibility(section, false); // Revert content state and styles
+                await setSectionContentVisibility(section, false); // Revert styles for this section
                 if (!wasActive) {
                     section.classList.remove('active');
                 }
@@ -3232,17 +3206,44 @@
         }
 
         async function downloadSectionPng(button) {
-            console.log('downloadSectionPng called!'); // Debugging log
-            const section = button.closest('.section');
-            if (!section) return;
+            // Show loading screen for individual image
+            showLoadingScreen("Preparing your image...");
 
-            // Hide download buttons and navigation
+            console.log('downloadSectionPng called!');
+            const section = button.closest('.section');
+            if (!section) {
+                hideLoadingScreen();
+                return;
+            }
+
+            // Hide download buttons and navigation globally during capture
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
             allButtons.forEach(b => b.classList.add('screenshot-hide'));
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
-            const imageData = await getOrCreateSectionImage(section.id); // Use new caching function
+            // Set global screenshot-ready classes for body and container
+            document.body.classList.add('screenshot-ready');
+            const container = document.querySelector('.container');
+            if (container) {
+                const containerProps = ['position','width','maxWidth','left','top','zIndex','boxShadow','background','overflow','margin','padding'];
+                containerProps.forEach(prop => {
+                    originalContainerStyles[prop] = container.style[prop];
+                });
+                container.style.position = 'static';
+                container.style.width = '100vw';
+                container.style.maxWidth = '100vw';
+                container.style.left = '0';
+                container.style.top = '0';
+                container.style.zIndex = '9999';
+                container.style.boxShadow = 'none';
+                container.style.background = getComputedStyle(container).backgroundColor || 'white';
+                container.style.overflow = 'visible';
+                container.style.margin = '0';
+                container.style.padding = '0';
+            }
+
+            const imageData = await getOrCreateSectionImage(section.id);
 
             if (imageData) {
                 const link = document.createElement('a');
@@ -3253,9 +3254,18 @@
                 alert(`Failed to prepare image for section ${section.id}. Please try again.`);
             }
 
-            // Show download buttons and navigation again
+            // Clean up: Show download buttons/navigation, remove global screenshot-ready classes
             allButtons.forEach(b => b.classList.remove('screenshot-hide'));
             if (nav) nav.classList.remove('screenshot-hide');
+
+            document.body.classList.remove('screenshot-ready');
+            if (container) {
+                Object.keys(originalContainerStyles).forEach(prop => {
+                    container.style[prop] = originalContainerStyles[prop];
+                });
+            }
+
+            hideLoadingScreen(); // Hide loading screen after download
         }
 
         async function downloadFullPageDocx() {
@@ -3363,8 +3373,13 @@
         }
 
         // Loading screen functions
-        function showLoadingScreen() {
-            document.getElementById('loadingScreen').classList.add('show');
+        function showLoadingScreen(message = "Preparing...") { // Added message parameter
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingMessageElement = loadingScreen.querySelector('.loading-message');
+            if (loadingMessageElement) {
+                loadingMessageElement.textContent = message;
+            }
+            loadingScreen.classList.add('show');
         }
 
         function hideLoadingScreen() {
@@ -3372,9 +3387,9 @@
         }
 
         async function downloadFullPageZip() {
-            showLoadingScreen(); // Show loading screen at the start
+            showLoadingScreen("Preparing your Zip file..."); // Changed message
 
-            console.log('downloadFullPageZip called!'); // Debugging log
+            console.log('downloadFullPageZip called!');
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3382,11 +3397,10 @@
             const nav = document.querySelector('.navigation');
             if (nav) nav.classList.add('screenshot-hide');
 
-            // Apply screenshot-ready class to body (or container) for global styling adjustments
+            // Apply screenshot-ready class to body and container
             document.body.classList.add('screenshot-ready');
             const container = document.querySelector('.container');
             if (container) {
-                // Temporarily store original container styles and override for capture
                 const containerProps = ['position', 'width', 'maxWidth', 'left', 'top', 'zIndex', 'boxShadow', 'background', 'overflow', 'margin', 'padding'];
                 containerProps.forEach(prop => {
                     originalContainerStyles[prop] = container.style[prop];
@@ -3402,7 +3416,6 @@
                 container.style.overflow = 'visible';
                 container.style.margin = '0';
                 container.style.padding = '0';
-                container.classList.add('screenshot-ready'); // Add screenshot-ready to container as well
             }
 
             const sectionsOrder = [
@@ -3421,14 +3434,14 @@
                 console.log(`[ZIP DEBUG] Processing section: ${sectionId}`);
                 sectionCount++;
 
-                const imgDataBase64 = await getOrCreateSectionImage(sectionId);
+                const imgDataBase64 = await getOrCreateSectionImage(sectionId); // This function handles individual section visibility
 
                 if (!imgDataBase64) {
                     console.error(`[ZIP ERROR] Could not get image data for section ${sectionId}, skipping.`);
                     continue;
                 }
 
-                zip.file(`${sectionId}.jpeg`, imgDataBase64.split(',')[1], { base64: true }); // Changed to JPEG
+                zip.file(`${sectionId}.jpeg`, imgDataBase64.split(',')[1], { base64: true });
                 console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
 
             }
@@ -3442,36 +3455,34 @@
                     Object.keys(originalContainerStyles).forEach(prop => {
                         container.style[prop] = originalContainerStyles[prop];
                     });
-                    container.classList.remove('screenshot-ready');
                 }
                 document.body.classList.remove('screenshot-ready');
                 hideLoadingScreen(); 
                 return;
             }
 
-            // Generate and save the ZIP file
-            zip.generateAsync({ type: 'blob' }).then(function (blob) {
+            try {
+                // Generate and save the ZIP file
+                const blob = await zip.generateAsync({ type: 'blob' });
                 saveAs(blob, 'Data_Security_Module_Sections.zip');
                 console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
-                hideLoadingScreen();
-            }).catch(error => {
+            } catch (error) {
                 console.error('[ZIP ERROR] Error generating or saving ZIP file:', error);
                 alert('Failed to create or download ZIP file. Please check console for errors.');
-                hideLoadingScreen();
-            });
+            } finally {
+                hideLoadingScreen(); // Hide loading screen always
+                // Show download buttons and navigation again
+                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+                if (nav) nav.classList.remove('screenshot-hide');
+                console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
 
-            // Show download buttons and navigation again
-            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-            if (nav) nav.classList.remove('screenshot-hide');
-            console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
-            
-            // Restore global body and container styles
-            document.body.classList.remove('screenshot-ready');
-            if (container) {
-                Object.keys(originalContainerStyles).forEach(prop => {
-                    container.style[prop] = originalContainerStyles[prop];
-                });
-                container.classList.remove('screenshot-ready');
+                // Restore global body and container styles
+                document.body.classList.remove('screenshot-ready');
+                if (container) {
+                    Object.keys(originalContainerStyles).forEach(prop => {
+                        container.style[prop] = originalContainerStyles[prop];
+                    });
+                }
             }
         }
 
