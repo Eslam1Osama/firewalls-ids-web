@@ -62,60 +62,6 @@
             background: var(--bg-gradient);
             min-height: 100vh;
             font-size: 16px; /* Base font size */
-            overflow-x: hidden; /* Prevent horizontal scroll */
-        }
-
-        /* Loading Overlay Styles */
-        #loadingOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--blue3); /* Light background, adjust as needed */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999; /* Ensure it's on top of everything */
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.8s ease-out, visibility 0.8s ease-out; /* Smooth transition */
-            color: var(--primary);
-        }
-
-        #loadingOverlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none; /* Allow clicks through once hidden */
-        }
-
-        #loadingOverlay .spinner {
-            border: 8px solid rgba(0, 172, 193, 0.2); /* Light blue */
-            border-top: 8px solid var(--primary); /* Primary blue */
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.5s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        #loadingOverlay p {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        #loadingOverlay .sub-message {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            text-align: center;
-            max-width: 80%;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .container {
@@ -128,15 +74,13 @@
             text-align: center;
             color: var(--text-main);
             margin-bottom: 30px;
-            padding: 40px 20px; /* Base padding */
+            padding: 40px 20px;
             background: var(--header-bg);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
-            position: relative; /* Restored for theme-toggle positioning */
+            position: relative;
             overflow: hidden;
-            padding-top: 60px; /* Add extra space at the top for the toggle */
-            /* Ensure NO 'display: flex', 'flex-direction', or 'align-items' here */
         }
 
         .header::before {
@@ -907,7 +851,6 @@
             z-index: 10;
             display: flex;
             align-items: center;
-            /* Ensure NO 'margin-left: auto;' or 'left' property here */
         }
         .toggle-switch {
             width: 56px;
@@ -918,7 +861,7 @@
             cursor: pointer;
             transition: background 0.3s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-left: 10px; /* Keep for toggle elements within switch */
+            margin-left: 10px;
         }
         .toggle-slider {
             position: absolute;
@@ -1789,106 +1732,9 @@
             opacity: 0 !important; /* Hide arrows during capture */
         }
 
-        /* Add new styles for navigation dropdown */
-        .nav-dropdown-container {
-            display: none; /* Hidden by default */
-            width: 100%;
-            padding: 0 10px;
-        }
-
-        .nav-dropdown {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: 2px solid var(--primary);
-            background: var(--nav-bg);
-            color: var(--text-main);
-            font-size: 1em;
-            font-weight: 500;
-            cursor: pointer;
-            appearance: none; /* Remove default select styles */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300ACC1" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: var(--transition);
-        }
-
-        .nav-dropdown:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            transform: translateY(-1px);
-        }
-
-        .nav-dropdown option {
-            background: var(--nav-bg);
-            color: var(--text-main);
-            padding: 10px;
-        }
-
-        /* Responsive adjustments for navigation */
-        @media (max-width: 768px) {
-            .nav-buttons {
-                display: none; /* Hide original buttons */
-            }
-            .nav-dropdown-container {
-                display: block; /* Show dropdown */
-            }
-            .navigation {
-                padding: 10px; /* Adjust padding for dropdown */
-            }
-        }
-
-        /* Download Indicator Styles */
-        #downloadIndicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(0, 50, 61, 0.9);
-            color: var(--text-main);
-            padding: 12px 20px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            z-index: 9998; /* Below main loading overlay, but above content */
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px); /* Start slightly off-screen */
-            transition: opacity 0.4s ease-out, visibility 0.4s ease-out, transform 0.4s ease-out;
-        }
-
-        #downloadIndicator.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0); /* Slide into view */
-        }
-
-        #downloadIndicator .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3); /* Light ring */
-            border-top: 4px solid var(--primary); /* Primary blue for animation */
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        #downloadIndicator span {
-            font-size: 0.9em;
-            font-weight: 500;
-            color: var(--text-secondary); /* Adjust color for dark background */
-        }
-
     </style>
 </head>
 <body>
-    <div id="loadingOverlay">
-        <div class="spinner"></div>
-        <p>Preparing your module...</p>
-    </div>
     <div class="container">
         <div class="header">
             <div class="theme-toggle">
@@ -1935,17 +1781,6 @@
                 <button class="nav-btn" data-section="quiz">
                     <i class="fas fa-question-circle"></i> Review Questions
                 </button>
-            </div>
-            <!-- New dropdown for small screens -->
-            <div class="nav-dropdown-container">
-                <select id="navDropdown" class="nav-dropdown">
-                    <option value="objectives">Security Objectives</option>
-                    <option value="firewalls">Firewalls</option>
-                    <option value="firewall-types">Firewall Types</option>
-                    <option value="dmz">DMZ Networks</option>
-                    <option value="ids">Intrusion Detection</option>
-                    <option value="quiz">Review Questions</option>
-                </select>
             </div>
         </div>
 
@@ -2268,16 +2103,16 @@
                             <div class="pros" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: var(--primary); font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> Advantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> High security -- understands app-level threats</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can analyze data deeply (like URLs, keywords, file types)</li>
-                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can enforce policies (e.g., block certain sites, limit uploads)</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>High security</strong> -- understands app-level threats</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can <strong>analyze data deeply</strong> (like URLs, keywords, file types)</li>
+                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Can <strong>enforce policies</strong> (e.g., block certain sites, limit uploads)</li>
                                 </ul>
                             </div>
                             <div class="cons" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: #E57373; font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> Disadvantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Slower than other firewalls because of deep inspection</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> More complex to set up and manage</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Slower than other firewalls because of <strong>deep inspection</strong></li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> More <strong>complex to set up and manage</strong></li>
                                     <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Not suitable for untrusted external communications</li>
                                 </ul>
                             </div>
@@ -2317,16 +2152,16 @@
                             <div class="pros" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: var(--primary); font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle"></i> Advantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Faster than deep-inspection firewalls</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Low resource use -- doesn't slow down the network</li>
-                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Simple setup, ideal for trusted internal users</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>Faster</strong> than deep-inspection firewalls</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> <strong>Low resource use</strong> -- doesn't slow down the network</li>
+                                    <li style="margin-bottom: 0px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #4CAF50; margin-top: 4px;"></i> Simple setup, <strong>ideal for trusted internal users</strong></li>
                                 </ul>
                             </div>
                             <div class="cons" style="flex: 1; background: var(--blue1); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
                                 <h5 style="color: #E57373; font-size: 1.15em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-times-circle"></i> Disadvantages</h5>
                                 <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Doesn't inspect data -- can't detect malware or harmful content</li>
-                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> Not suitable for untrusted external communications</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> <strong>Doesn't inspect data</strong> -- can't detect malware or harmful content</li>
+                                    <li style="margin-bottom: 8px; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px;"><i class="fas fa-arrow-right" style="font-size: 0.8em; color: #EF5350; margin-top: 4px;"></i> <strong>Not suitable</strong> for untrusted external communications</li>
                                 </ul>
                             </div>
                         </div>
@@ -2993,14 +2828,6 @@
             });
             // Initialize progress bar
             updateProgressBar();
-
-            // Handle navigation dropdown change
-            const navDropdown = document.getElementById('navDropdown');
-            if (navDropdown) {
-                navDropdown.addEventListener('change', function() {
-                    showSection(this.value);
-                });
-            }
         });
 
         // Interactive Firewalls Functions
@@ -3101,37 +2928,12 @@
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
         const originalContainerStyles = {}; // Store container styles
 
-        const sectionImageCache = new Map(); // Cache for pre-rendered section images (JPEG Data URLs)
-        let preGeneratedZipBlob = null; // Global variable to store the pre-generated ZIP blob
-
-        // Utility function to wait for all images and fonts to load
-        async function waitForAllAssets() {
-            console.log('Waiting for all assets to load...');
-            const allImages = Array.from(document.images);
-            const imagePromises = allImages.map(img => {
-                if (img.complete && img.naturalHeight !== 0) {
-                    return Promise.resolve();
-                }
-                return new Promise(resolve => {
-                    img.addEventListener('load', resolve, { once: true });
-                    img.addEventListener('error', resolve, { once: true }); // Resolve even on error to not block
-                });
-            });
-
-            // Wait for all images to load
-            await Promise.all(imagePromises);
-
-            // Wait for all web fonts to load
-            await document.fonts.ready;
-            console.log('All assets loaded.');
-        }
-
         async function setSectionContentVisibility(targetElement, show) {
             console.log('setSectionContentVisibility called with show:', show); // Debugging log
 
             const elementsToOverride = targetElement.querySelectorAll(
                 '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
-                '.interactive-element, .firewall-function-card, .limitation-card, .question'
+                '.interactive-element, .firewall-function-card, .limitation-card, .question, .section'
             );
 
             // Properties to override for a clean capture
@@ -3223,254 +3025,11 @@
             await new Promise(r => setTimeout(r, 50)); // Small delay for rendering completion
         }
 
-        // Helper function to capture all sections data for ZIP generation
-        async function captureSectionsDataForZip() {
-            console.log('[CAPTURE] Starting section data capture for ZIP.');
-            const sectionsData = [];
-            const sectionsOrder = [
-                'objectives',
-                'firewalls',
-                'firewall-types',
-                'dmz',
-                'ids',
-                'quiz'
-            ];
-
-            const container = document.querySelector('.container');
-            if (container) {
-                // Apply temporary styles for full page capture
-                const containerProps = ['position', 'width', 'maxWidth', 'left', 'top', 'zIndex', 'boxShadow', 'background', 'overflow', 'margin', 'padding'];
-                containerProps.forEach(prop => {
-                    originalContainerStyles[prop] = container.style[prop];
-                });
-                container.style.position = 'static';
-                container.style.width = '100vw';
-                container.style.maxWidth = '100vw';
-                container.style.left = '0';
-                container.style.top = '0';
-                container.style.zIndex = '9999';
-                container.style.boxShadow = 'none';
-                container.style.background = getComputedStyle(container).backgroundColor || 'white';
-                container.style.overflow = 'visible';
-                container.style.margin = '0';
-                container.style.padding = '0';
-                container.classList.add('screenshot-ready'); // Add screenshot-ready to container as well
-            }
-            document.body.classList.add('screenshot-ready');
-
-            for (const sectionId of sectionsOrder) {
-                const section = document.getElementById(sectionId);
-                if (!section) {
-                    console.warn(`[CAPTURE] Section ${sectionId} not found, skipping capture.`);
-                    continue;
-                }
-                console.log(`[CAPTURE] Capturing section: ${sectionId}`);
-
-                // Store original section styles and apply temporary styles for capture
-                const originalSectionDisplay = section.style.display;
-                const originalSectionOverflow = section.style.overflow;
-                const originalSectionTransition = section.style.transition;
-                section.style.display = 'block'; // Ensure section is visible
-                section.style.overflow = 'visible'; // Ensure content is not clipped
-                section.style.transition = 'none'; // Disable transitions during capture
-                section.classList.add('screenshot-ready'); // Add screenshot-ready to current section
-
-                // Store original states of collapsible elements within THIS section and force open/show
-                const elementsToOverride = section.querySelectorAll(
-                    '.toggle-content, .function-content, .limitation-content, .question-answer, .analogy-content, ' +
-                    '.interactive-element, .firewall-function-card, .limitation-card, .question'
-                );
-                const savedElementStates = new Map(); // Map<element, { classes: string[], styles: Map<string, string> }>
-                const stylePropsToOverride = ['opacity', 'transform', 'transition', 'maxHeight', 'paddingTop', 'marginTop', 'display', 'overflow'];
-
-                elementsToOverride.forEach(el => {
-                    const elStyles = new Map();
-                    stylePropsToOverride.forEach(prop => {
-                        elStyles.set(prop, el.style[prop]); // Save current inline style
-                        el.style[prop] = ''; // Clear inline style first to let CSS rules apply
-                    });
-                    savedElementStates.set(el, {
-                        classes: Array.from(el.classList),
-                        styles: elStyles
-                    });
-
-                    // Force open/show
-                    el.classList.add('open');
-                    el.classList.add('show');
-                    el.style.transition = 'none';
-                    el.style.transform = 'none';
-                    el.style.opacity = '1';
-                    el.style.maxHeight = '20000px'; // Ensure content is fully visible
-                    el.style.overflow = 'visible';
-
-                    // For content divs, ensure padding and margin are applied for layout
-                    if (el.classList.contains('toggle-content') || el.classList.contains('function-content') || el.classList.contains('limitation-content') || el.classList.contains('question-answer') || el.classList.contains('analogy-content')) {
-                        el.style.paddingTop = '10px';
-                        el.style.marginTop = '10px';
-                    }
-                });
-                await new Promise(r => requestAnimationFrame(r));
-                await new Promise(r => setTimeout(r, 200));
-                await waitForAllAssets();
-
-                try {
-                    const canvas = await html2canvas(section, {
-                        backgroundColor: null,
-                        useCORS: true,
-                        scale: 2,
-                        logging: false, // Set to false for cleaner console during pre-render
-                        allowTaint: true,
-                    });
-                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9);
-                    sectionsData.push({ id: sectionId, imgDataUrl: imgDataUrl });
-                } catch (error) {
-                    console.error(`[CAPTURE ERROR] Failed to capture section ${sectionId}:`, error);
-                } finally {
-                    // Restore original section styles
-                    section.style.display = originalSectionDisplay;
-                    section.style.overflow = originalSectionOverflow;
-                    section.style.transition = originalSectionTransition;
-                    section.classList.remove('screenshot-ready');
-
-                    // Restore original states of collapsible elements within THIS section
-                    elementsToOverride.forEach(el => {
-                        if (savedElementStates.has(el)) {
-                            const savedState = savedElementStates.get(el);
-                            el.className = '';
-                            savedState.classes.forEach(cls => el.classList.add(cls));
-                            savedState.styles.forEach((value, prop) => {
-                                el.style[prop] = value;
-                            });
-                        }
-                    });
-                }
-            }
-
-            // Restore global body and container styles after all sections are processed
-            document.body.classList.remove('screenshot-ready');
-            if (container) {
-                Object.keys(originalContainerStyles).forEach(prop => {
-                    container.style[prop] = originalContainerStyles[prop];
-                });
-                container.classList.remove('screenshot-ready');
-            }
-
-            console.log('[CAPTURE] Finished section data capture.');
-            return sectionsData;
-        }
-
-        // Function to proactively pre-render all sections (individual and full ZIP)
-        async function proactivelyPreRenderSections() {
-            console.log('Starting proactive pre-rendering of sections...');
-            const sectionsOrder = [
-                'objectives',
-                'firewalls',
-                'firewall-types',
-                'dmz',
-                'ids',
-                'quiz'
-            ];
-
-            for (const sectionId of sectionsOrder) {
-                const section = document.getElementById(sectionId);
-                if (!section) {
-                    console.warn(`[PRE-RENDER] Section ${sectionId} not found, skipping pre-render.`);
-                    continue;
-                }
-
-                // Only pre-render individual section if not already in cache
-                if (sectionImageCache.has(sectionId)) {
-                    console.log(`[PRE-RENDER] Section ${sectionId} already cached, skipping.`);
-                    continue;
-                }
-
-                console.log(`[PRE-RENDER] Pre-rendering individual section: ${sectionId}`);
-                
-                const wasActive = section.classList.contains('active');
-                if (!wasActive) {
-                    section.classList.add('active');
-                }
-                await setSectionContentVisibility(section, true);
-                await waitForAllAssets();
-
-                try {
-                    const canvas = await html2canvas(section, {
-                        backgroundColor: null,
-                        useCORS: true,
-                        scale: 1.5, // Lower scale for pre-render to save memory, can adjust if needed
-                        logging: false,
-                        allowTaint: true
-                    });
-                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.8); // Slightly lower quality for pre-render
-                    sectionImageCache.set(sectionId, imgDataUrl);
-                    console.log(`[PRE-RENDER] Successfully pre-rendered and cached section: ${sectionId}`);
-                } catch (error) {
-                    console.error(`[PRE-RENDER ERROR] Failed to pre-render section ${sectionId}:`, error);
-                } finally {
-                    await setSectionContentVisibility(section, false);
-                    if (!wasActive) {
-                        section.classList.remove('active');
-                    }
-                }
-            }
-            console.log('Finished proactive individual section pre-rendering.');
-
-            // Now, proactively generate the full ZIP file
-            console.log('Starting proactive full ZIP generation...');
-            try {
-                const sectionsDataForZip = await captureSectionsDataForZip();
-                if (sectionsDataForZip.length > 0) {
-                    const zipWorker = new Worker('zipWorker.js');
-                    zipWorker.onmessage = function(e) {
-                        if (e.data.status === 'complete') {
-                            preGeneratedZipBlob = e.data.blob;
-                            console.log('[PRE-RENDER] Full ZIP pre-generated and cached.');
-                        } else if (e.data.status === 'error') {
-                            console.error('[PRE-RENDER ERROR] Error from worker during pre-generation:', e.data.message);
-                        }
-                        zipWorker.terminate();
-                    };
-                    zipWorker.onerror = function(error) {
-                        console.error('[PRE-RENDER ERROR] Web Worker error during pre-generation:', error);
-                    };
-                    zipWorker.postMessage({ sectionsData: sectionsDataForZip });
-                } else {
-                    console.warn('[PRE-RENDER] No sections to pre-generate for full ZIP.');
-                }
-            } catch (error) {
-                console.error('[PRE-RENDER ERROR] Failed to capture sections for full ZIP pre-generation:', error);
-            }
-            console.log('Finished proactive full ZIP generation setup.');
-
-            // Hide the loading overlay after all pre-rendering is complete
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.classList.add('hidden');
-                console.log('Loading overlay hidden.');
-            }
-        }
-
         async function downloadSectionPng(button) {
-            console.log('downloadSectionPng called!');
+            console.log('downloadSectionPng called!'); // Debugging log
+            // alert('downloadSectionPng called!'); // Temporary alert for debugging - REMOVED
             const section = button.closest('.section');
             if (!section) return;
-
-            const sectionId = section.id;
-
-            // Show download indicator
-            document.getElementById('downloadIndicator').classList.add('show');
-
-            // Check if image is already cached
-            if (sectionImageCache.has(sectionId)) {
-                console.log(`Serving pre-rendered image for section ${sectionId} from cache.`);
-                const imgDataUrl = sectionImageCache.get(sectionId);
-                const link = document.createElement('a');
-                link.download = sectionId + '.jpeg';
-                link.href = imgDataUrl;
-                link.click();
-                document.getElementById('downloadIndicator').classList.remove('show'); // Hide on completion
-                return; // Exit after serving from cache
-            }
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3479,36 +3038,29 @@
             if (nav) nav.classList.add('screenshot-hide');
 
             await setSectionContentVisibility(section, true); // Expand all content in section and prepare styles
-            await waitForAllAssets(); // Ensure all assets are loaded before capture
 
             try {
                 const canvas = await html2canvas(section, {
                     backgroundColor: null,
                     useCORS: true,
                     scale: 2,
-                    logging: false,
+                    logging: false, // Set logging to false for production
                     allowTaint: true
                 });
-                const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
-                sectionImageCache.set(sectionId, imgDataUrl); // Cache the rendered image
-
                 const link = document.createElement('a');
-                link.download = sectionId + '.jpeg'; // Changed to JPEG
-                link.href = imgDataUrl;
+                link.download = section.id + '.png';
+                link.href = canvas.toDataURL('image/png');
                 link.click();
             } catch (error) {
-                console.error('Error generating section JPEG:', error);
-                alert('Failed to generate section JPEG. Please try again.');
-            } finally {
-                await setSectionContentVisibility(section, false); // Revert content state and styles
-
-                // Show download buttons and navigation again
-                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-                if (nav) nav.classList.remove('screenshot-hide');
-
-                // Hide download indicator
-                document.getElementById('downloadIndicator').classList.remove('show');
+                console.error('Error generating section PNG:', error); // Keep console.error for actual errors
+                alert('Failed to generate section PNG. Please try again.');
             }
+
+            await setSectionContentVisibility(section, false); // Revert content state and styles
+
+            // Show download buttons and navigation again
+            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+            if (nav) nav.classList.remove('screenshot-hide');
         }
 
         async function downloadFullPageDocx() {
@@ -3556,8 +3108,6 @@
                 await setSectionContentVisibility(section, true);
                 console.log(`[DOCX DEBUG] Content visibility set to true for section ${sectionId}.`);
 
-                await waitForAllAssets(); // Ensure all assets are loaded before capture
-
                 try {
                     const canvas = await html2canvas(section, {
                         backgroundColor: null,
@@ -3568,7 +3118,7 @@
                     });
                     console.log(`[DOCX DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                    const imgDataUrl = canvas.toDataURL('image/png');
                     const imgData = imgDataUrl.split(',')[1]; // Get base64 part
                     console.log(`[DOCX DEBUG] Converted canvas to imgDataUrl for section ${sectionId}.`);
 
@@ -3611,16 +3161,16 @@
                 } catch (error) {
                     console.error(`[DOCX ERROR] Error during canvas generation or section addition for ${sectionId}:`, error);
                     alert(`Failed to generate Word document for section ${sectionId}. Please try again and check console for errors.`);
-                } finally {
-                    // Revert content state and styles immediately after capturing the section
-                    await setSectionContentVisibility(section, false);
-                    console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
+                }
 
-                    // Revert active state if it was temporarily added
-                    if (!wasActive) {
-                        section.classList.remove('active');
-                        console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
-                    }
+                // Revert content state and styles immediately after capturing the section
+                await setSectionContentVisibility(section, false);
+                console.log(`[DOCX DEBUG] Content visibility reverted for section ${sectionId}.`);
+
+                // Revert active state if it was temporarily added
+                if (!wasActive) {
+                    section.classList.remove('active');
+                    console.log(`[DOCX DEBUG] Removed 'active' class from section ${sectionId}.`);
                 }
             }
             console.log('[DOCX DEBUG] All sections processed. Attempting to pack document.');
@@ -3644,18 +3194,8 @@
         }
 
         async function downloadFullPageZip() {
-            console.log('downloadFullPageZip called!');
-
-            // Show download indicator
-            document.getElementById('downloadIndicator').classList.add('show');
-
-            // If ZIP is already pre-generated, use it directly
-            if (preGeneratedZipBlob) {
-                console.log('[ZIP DEBUG] Serving pre-generated ZIP from cache.');
-                saveAs(preGeneratedZipBlob, 'Data_Security_Module_Sections_JPEG.zip');
-                document.getElementById('downloadIndicator').classList.remove('show');
-                return;
-            }
+            console.log('downloadFullPageZip called!'); // Debugging log
+            // alert('Download ZIP button clicked!'); // For immediate feedback
 
             // Hide download buttons and navigation
             const allButtons = document.querySelectorAll('.download-section-btn, .download-btn');
@@ -3686,7 +3226,16 @@
                 container.classList.add('screenshot-ready'); // Add screenshot-ready to container as well
             }
 
-            const sectionsData = []; // Array to hold image data for worker
+            const sectionsOrder = [
+                'objectives',
+                'firewalls',
+                'firewall-types',
+                'dmz',
+                'ids',
+                'quiz'
+            ];
+
+            const zip = new JSZip();
             let sectionCount = 0;
 
             for (const sectionId of sectionsOrder) {
@@ -3743,8 +3292,6 @@
                 });
                 await new Promise(r => requestAnimationFrame(r)); // Ensures DOM is ready for next frame
                 await new Promise(r => setTimeout(r, 200)); // Increased delay for rendering completion after style changes
-                
-                await waitForAllAssets(); // Ensure all assets are loaded before capture
 
                 console.log(`[ZIP DEBUG] Attempting html2canvas capture for section ${sectionId}...`);
 
@@ -3758,10 +3305,12 @@
                     });
                     console.log(`[ZIP DEBUG] html2canvas generated canvas for section ${sectionId}.`);
 
-                    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
-                    // No need to extract base64 here, send the full data URL to worker
-                    sectionsData.push({ id: sectionId, imgDataUrl: imgDataUrl });
-                    console.log(`[ZIP DEBUG] Image data for section ${sectionId} prepared for worker.`);
+                    const imgDataUrl = canvas.toDataURL('image/png');
+                    const imgDataBase64 = imgDataUrl.split(',')[1]; 
+                    console.log(`[ZIP DEBUG] Converted canvas to Base64 for section ${sectionId}.`);
+
+                    zip.file(`${sectionId}.png`, imgDataBase64, { base64: true });
+                    console.log(`[ZIP DEBUG] Image for section ${sectionId} added to ZIP.`);
 
                 } catch (error) {
                     console.error(`[ZIP ERROR] Error during canvas generation or adding to ZIP for ${sectionId}:`, error);
@@ -3790,8 +3339,9 @@
                 }
             }
 
-            console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP via worker.');
+            console.log('[ZIP DEBUG] All sections processed. Attempting to generate ZIP.');
             if (sectionCount === 0) {
+                // alert('No sections found to download. Please ensure sections have correct IDs.');
                 console.warn('[ZIP DEBUG] No sections found to process for ZIP download.');
                 // Show download buttons and navigation again even if no sections
                 allButtons.forEach(b => b.classList.remove('screenshot-hide'));
@@ -3804,72 +3354,34 @@
                     container.classList.remove('screenshot-ready');
                 }
                 document.body.classList.remove('screenshot-ready');
-                // Hide download indicator on early exit
-                document.getElementById('downloadIndicator').classList.remove('show');
                 return;
             }
 
-            // Initialize Web Worker
-            const zipWorker = new Worker('zipWorker.js');
-            console.log('[ZIP DEBUG] Web Worker initialized.');
+            // Generate and save the ZIP file
+            zip.generateAsync({ type: 'blob' }).then(function (blob) {
+                saveAs(blob, 'Data_Security_Module_Sections.zip');
+                console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
+                // alert('ZIP file downloaded successfully!');
+            }).catch(error => {
+                console.error('[ZIP ERROR] Error generating or saving ZIP file:', error);
+                alert('Failed to create or download ZIP file. Please check console for errors.');
+            });
 
-            // Listen for messages from the worker
-            zipWorker.onmessage = function(e) {
-                if (e.data.status === 'complete') {
-                    const blob = e.data.blob;
-                    saveAs(blob, 'Data_Security_Module_Sections_JPEG.zip');
-                    console.log('[ZIP DEBUG] ZIP file generated and downloaded via worker!');
-                } else if (e.data.status === 'error') {
-                    console.error('[ZIP ERROR] Error from worker:', e.data.message);
-                    alert('Failed to create or download ZIP file. Please check console for errors.');
-                }
-
-                // Terminate the worker after job is done
-                zipWorker.terminate();
-                console.log('[ZIP DEBUG] Web Worker terminated.');
-
-                // Show download buttons and navigation again
-                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-                if (nav) nav.classList.remove('screenshot-hide');
-                console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
-                
-                // Restore global body and container styles
-                document.body.classList.remove('screenshot-ready');
-                if (container) {
-                    Object.keys(originalContainerStyles).forEach(prop => {
-                        container.style[prop] = originalContainerStyles[prop];
-                    });
-                    container.classList.remove('screenshot-ready');
-                }
-                // Hide download indicator on completion
-                document.getElementById('downloadIndicator').classList.remove('show');
-            };
-
-            zipWorker.onerror = function(error) {
-                console.error('[ZIP ERROR] Web Worker error:', error);
-                alert('An error occurred in the ZIP generation process. Please check console.');
-
-                // Ensure UI is restored even on worker error
-                allButtons.forEach(b => b.classList.remove('screenshot-hide'));
-                if (nav) nav.classList.remove('screenshot-hide');
-                document.body.classList.remove('screenshot-ready');
-                if (container) {
-                    Object.keys(originalContainerStyles).forEach(prop => {
-                        container.style[prop] = originalContainerStyles[prop];
-                    });
-                    container.classList.remove('screenshot-ready');
-                }
-                // Hide download indicator on error
-                document.getElementById('downloadIndicator').classList.remove('show');
-            };
-
-            // Post message to worker to start ZIP generation
-            zipWorker.postMessage({ sectionsData: sectionsData });
-            console.log('[ZIP DEBUG] Sent sections data to worker.');
+            // Show download buttons and navigation again
+            allButtons.forEach(b => b.classList.remove('screenshot-hide'));
+            if (nav) nav.classList.remove('screenshot-hide');
+            console.log('[ZIP DEBUG] Download buttons and navigation shown again.');
+            
+            // Restore global body and container styles
+            document.body.classList.remove('screenshot-ready');
+            if (container) {
+                Object.keys(originalContainerStyles).forEach(prop => {
+                    container.style[prop] = originalContainerStyles[prop];
+                });
+                container.classList.remove('screenshot-ready');
+            }
         }
 
-        // Call proactive pre-rendering on page load
-        window.addEventListener('load', proactivelyPreRenderSections);
     </script>
 
     <footer>
@@ -3897,8 +3409,4 @@
         </div>
     </div>
 </body>
-    <div id="downloadIndicator" class="hidden">
-        <div class="spinner"></div>
-        <span>Generating Download...</span>
-    </div>
 </html>
