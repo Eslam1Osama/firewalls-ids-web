@@ -1794,17 +1794,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 50, 61, 0.6); /* Semi-transparent dark blue */
-            backdrop-filter: blur(8px); /* Frosted glass effect */
-            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            background: linear-gradient(135deg, rgba(0, 50, 61, 0.8) 0%, rgba(0, 105, 120, 0.8) 100%); /* Deeper, more vibrant gradient */
+            backdrop-filter: blur(12px) brightness(0.8); /* Stronger blur and slight darkening */
+            -webkit-backdrop-filter: blur(12px) brightness(0.8); /* Safari support */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 99999; /* On top of everything */
+            z-index: 99999;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out; /* Slower, smoother transition */
         }
 
         .loading-overlay.show {
@@ -1813,13 +1813,17 @@
         }
 
         .loading-spinner {
-            border: 8px solid rgba(255, 255, 255, 0.2);
+            border: 8px solid rgba(255, 255, 255, 0.3); /* Slightly brighter border */
             border-top: 8px solid var(--accent); /* Accent color for spinner */
+            border-right: 8px solid var(--primary); /* Primary color for second part of spinner */
+            border-bottom: 8px solid var(--secondary); /* Secondary color for third part */
+            border-left: 8px solid var(--accent); /* Accent for fourth, to complete gradient effect */
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            margin-bottom: 20px;
+            width: 70px; /* Slightly larger */
+            height: 70px; /* Slightly larger */
+            animation: spin 1.5s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite, /* Slower, smoother spin */
+                         fade-in-out 3s ease-in-out infinite alternate;
+            margin-bottom: 25px; /* More spacing */
         }
 
         @keyframes spin {
@@ -1827,22 +1831,35 @@
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes fade-in-out {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
         .loading-text {
             color: white;
-            font-size: 1.5em;
+            font-size: 1.8em; /* Larger, more prominent text */
             font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow for pop */
             text-align: center;
+            letter-spacing: 0.05em; /* Slightly spaced out letters */
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.98); opacity: 0.9; }
+            100% { transform: scale(1.02); opacity: 1; }
         }
 
         @media (max-width: 600px) {
             .loading-spinner {
-                width: 45px;
-                height: 45px;
-                border-width: 6px;
+                width: 55px;
+                height: 55px;
+                border-width: 7px;
             }
             .loading-text {
-                font-size: 1.2em;
+                font-size: 1.4em;
             }
         }
 
@@ -2880,14 +2897,14 @@
         });
 
         // TEMPORARY: Show loading screen on page load for debugging
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded: Attempting to show loading screen for test.');
-            showLoadingScreen('Testing loading screen visibility...');
-            setTimeout(() => {
-                hideLoadingScreen();
-                console.log('Loading screen test completed.');
-            }, 3000); // Hide after 3 seconds
-        });
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     console.log('DOMContentLoaded: Attempting to show loading screen for test.');
+        //     showLoadingScreen('Testing loading screen visibility...');
+        //     setTimeout(() => {
+        //         hideLoadingScreen();
+        //         console.log('Loading screen test completed.');
+        //     }, 3000); // Hide after 3 seconds
+        // });
 
         // Retain all original interactive logic for navigation, toggles, and quiz
         // Navigation functionality
@@ -3071,6 +3088,10 @@
         const originalStates = new Map(); // Map<element, { classes: string[], wasOpen: boolean, wasShow: boolean, styles: Map<string, string> }>
         const originalContainerStyles = {}; // Store container styles
 
+        // Add a simple cache for generated content
+        let cachedPngBlob = null;
+        let cachedZipBlob = null;
+
         // Helper functions for loading screen
         function showLoadingScreen(message) {
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -3213,6 +3234,15 @@
 
         async function downloadSectionPng(button) {
             console.log('downloadSectionPng called!'); // Debugging log
+            
+            if (cachedPngBlob) {
+                showLoadingScreen('Downloading from cache...');
+                await new Promise(r => setTimeout(500)); // Simulate a small delay for user feedback
+                saveAs(cachedPngBlob, 'section.jpeg'); // Use section.jpeg as a generic name for now
+                hideLoadingScreen();
+                return;
+            }
+
             showLoadingScreen('Preparing your image...'); // Show loading screen
 
             const section = button.closest('.section');
@@ -3238,10 +3268,15 @@
                     logging: false, // Set logging to false for production
                     allowTaint: true
                 });
-                const link = document.createElement('a');
-                link.download = section.id + '.jpeg'; // Changed to JPEG
-                link.href = canvas.toDataURL('image/jpeg', 0.9); // Changed to JPEG with quality 0.9
-                link.click();
+                canvas.toBlob(function(blob) {
+                    if (blob) {
+                        cachedPngBlob = blob;
+                        saveAs(blob, section.id + '.jpeg');
+                    } else {
+                        console.error("Error: Blob is null in toBlob callback.");
+                        alert("Failed to generate image. Blob is null.");
+                    }
+                }, 'image/jpeg', 0.9);
             } catch (error) {
                 console.error('Error generating section PNG:', error); // Keep console.error for actual errors
                 alert('Failed to generate section PNG. Please try again.');
@@ -3394,6 +3429,15 @@
 
         async function downloadFullPageZip() {
             console.log('downloadFullPageZip called!'); // Debugging log
+            
+            if (cachedZipBlob) {
+                showLoadingScreen('Downloading from cache...');
+                await new Promise(r => setTimeout(500)); // Simulate a small delay for user feedback
+                saveAs(cachedZipBlob, 'Data_Security_Module_Sections.zip');
+                hideLoadingScreen();
+                return;
+            }
+
             showLoadingScreen('Preparing your zip file...'); // Show loading screen
 
             // Hide download buttons and navigation
@@ -3551,6 +3595,7 @@
                 // Generate and save the ZIP file
                 const blob = await zip.generateAsync({ type: 'blob' });
                 saveAs(blob, 'Data_Security_Module_Sections.zip');
+                cachedZipBlob = blob; // Cache the generated blob
                 console.log('[ZIP DEBUG] ZIP file generated and downloaded!');
 
             } catch (overallError) {
