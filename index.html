@@ -908,12 +908,8 @@
             color: var(--primary);
         }
         .download-section-btn {
-            position: absolute;
-            top: 25px; /* Adjust as needed */
-            right: 25px; /* Adjust as needed */
-            z-index: 10; /* Ensure it's above other content */
-            background: var(--blue2); /* Subtler background for icon-only button */
-            color: var(--text-main); /* Changed to align with text color palette */
+            background: var(--blue2);
+            color: var(--text-main);
             border: none;
             border-radius: 50%;
             width: 38px;
@@ -921,10 +917,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4em; /* Increased icon size for better visual balance */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15); /* Refined box shadow */
+            font-size: 1.4em;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
+            margin-left: auto; /* Pushes the button to the right within the flex container */
+            flex-shrink: 0; /* Prevents the button from shrinking */
         }
         .download-section-btn:hover {
             background: var(--blue3); /* Gentler hover effect */
@@ -2633,10 +2631,11 @@
 
         <!-- Security Objectives Section -->
         <div id="objectives" class="section active objectives-container">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Security Objectives</h2>
+            <h2 class="section-title">Security Objectives
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             <div class="definition-box">
                 <p>Before diving into firewalls and IDS, it's crucial to understand the fundamental goals of information security:</p>
             </div>
@@ -2679,10 +2678,11 @@
 
         <!-- Firewalls Section -->
         <div id="firewalls" class="section" style="padding-bottom: 5px;">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Firewalls</h2>
+            <h2 class="section-title">Firewalls
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             
             <div class="subsection" style="margin-bottom: 0px;">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -2839,10 +2839,11 @@
 
         <!-- Firewall Types Section -->
         <div id="firewall-types" class="section">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Types of Firewalls</h2>
+            <h2 class="section-title">Types of Firewalls
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             
             <div class="subsection">
                 <div class="firewall-types">
@@ -3019,10 +3020,11 @@
 
         <!-- DMZ Section -->
         <div id="dmz" class="section">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Demilitarized Zone (DMZ) Networks</h2>
+            <h2 class="section-title">Demilitarized Zone (DMZ) Networks
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -3096,10 +3098,11 @@
 
         <!-- IDS Section -->
         <div id="ids" class="section">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Intrusion Detection Systems (IDS)</h2>
+            <h2 class="section-title">Intrusion Detection Systems (IDS)
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
@@ -3278,10 +3281,11 @@
 
         <!-- Quiz Section -->
         <div id="quiz" class="section">
-            <button class="download-section-btn" onclick="downloadSectionPng(this)">
-                <i class="fas fa-download"></i>
-            </button>
-            <h2 class="section-title">Review Questions</h2>
+            <h2 class="section-title">Review Questions
+                <button class="download-section-btn" onclick="downloadSectionPng(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+            </h2>
             
             <div class="subsection">
                 <div class="firewall-card" style="background: var(--section-bg); color: var(--text-main); box-shadow: var(--shadow); border-radius: 15px; padding: 24px 20px 20px 20px; margin-bottom: 32px;">
