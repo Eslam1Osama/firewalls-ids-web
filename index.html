@@ -140,15 +140,9 @@
         }
 
         .navigation {
-            background: var(--nav-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 15px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* Ensure buttons wrap */
-            gap: 10px;
+            background: var(--nav-bg); backdrop-filter: blur(10px); border-radius: 50px;
+            padding: 15px; margin-bottom: 30px; display: flex; justify-content: center;
+            flex-wrap: wrap; gap: 10px; position: sticky; top: 10px; z-index: 100;
         }
 
         .nav-buttons {
@@ -159,17 +153,9 @@
         }
 
         .nav-btn {
-            background: var(--nav-btn-bg);
-            color: var(--text-main);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: var(--nav-btn-bg); color: white; border: none; padding: 12px 20px;
+            border-radius: 25px; cursor: pointer; transition: var(--transition); font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
         }
 
         .nav-btn:hover, .nav-btn.active {
