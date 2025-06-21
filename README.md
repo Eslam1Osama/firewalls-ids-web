@@ -1,66 +1,58 @@
-# firewalls-ids-web
-A learning-focused web page covering Firewalls and Intrusion Detection Systems (IDS), built for educational use in the Data Security course.
+# Data Security Learning Module: Firewalls & IDS
 
-# Firewalls and Intrusion Detection Systems (IDS) - Web Learning Module
+An interactive, single-page web application designed to teach the essential concepts of **Firewalls and Intrusion Detection Systems** for the **ECE4304 Data Security** course. This project transforms complex networking and security principles into a responsive, engaging, and easy-to-understand learning experience.
 
-This project is a simple educational webpage created to help students better understand key topics in Data Security — particularly **Firewalls** and **Intrusion Detection Systems (IDS)**.
+### [Live Demo Link](https://firewalls-ids-web.vercel.app/)
 
-## 📚 Purpose
+## ✨ Features
 
-The original content was extracted from a course sheet (`Sheet10_Firewalls__IDS.docx`) and converted into an interactive web format. The goal is to:
+This module is packed with features designed to enhance the learning process:
 
-- Enhance the learning experience for students
-- Make cybersecurity concepts more engaging
-- Provide a quick-reference guide to core networking security tools
+-   **Segmented Content:** The material is broken down into logical sections covering Security Objectives, Firewalls, Firewall Types, DMZ, and Intrusion Detection.
+-   **Interactive Navigation:** Users can switch between sections using a sticky navigation bar on desktop or a responsive dropdown menu on mobile devices.
+-   **Collapsible Sections:** Many topics feature interactive, collapsible cards to present detailed information without overwhelming the user.
+-   **Visual Aids:** Each concept is explained with clear diagrams and tables to simplify complex information.
+-   **Progress Tracking:** A visual progress bar at the top shows students how far they've progressed through the module.
+-   **Review Quiz:** A dedicated section with expandable questions and answers to test comprehension.
+-   **High-Quality Downloads:**
+    -   Download any individual section as a high-resolution JPEG image.
+    -   Download all sections at once as a convenient ZIP file.
+    -   Link to the original DOCX sheet.
+-   **Light & Dark Mode:** A persistent theme toggle for comfortable viewing.
+-   **Fully Responsive:** Optimized for a seamless experience on desktops, tablets, and smartphones.
 
-## 🔍 Topics Covered
+## 📚 Topics Covered
 
-- Security Objectives (CIA, Authenticity, Accountability)
-- Types of Firewalls (Packet Filtering, Stateful, Proxy, etc.)
-- Firewall Functions and Design Goals
-- DMZ Networks
-- Intrusion Detection Systems (HIDS, NIDS)
-- IDS Techniques (Signature vs Anomaly-based)
+This module provides a comprehensive overview of network defense mechanisms:
 
-## 🛠️ Technologies Used
-
-- HTML5
-- CSS3
-- JavaScript
-- Hosted on [Vercel](https://vercel.com)
-
-## 🚀 Live Demo
-[Click here to view the site](https://firewalls-ids-web.vercel.app/)
-
-## 📁 Folder Structure
-
-├── index.html # Main content page
-
-├── media/ # sheet in word form
-
-└── assets/ # Images or additional content
-تحرير
-## 🎓 Purpose
-
-Created as a modern, mobile-friendly alternative to traditional PDF or DOC-based handouts. Helps engage students through a web-based learning experience.
-
-## ✅ How to Use
-
-1. Fork or clone the repository.
-2. Modify or expand content if needed.
-3. Deploy via Vercel (auto-deploy from GitHub).
+1.  **Security Objectives:** A review of the core goals: Confidentiality, Integrity, Availability, Authenticity, and Accountability.
+2.  **Firewalls:** In-depth explanation of firewall purposes, design goals, techniques, and limitations.
+3.  **Firewall Types:** A breakdown of Packet Filtering, Stateful Inspection, Application-Level Gateway, and Circuit-Level Gateway firewalls.
+4.  **DMZ Networks:** Understanding the purpose, benefits, and typical services of a Demilitarized Zone.
+5.  **Intrusion Detection:** Introduction to Intrusion Detection Systems (IDS), their components, types (HIDS vs. NIDS), and detection techniques (Misuse vs. Anomaly).
+6.  **Review Questions:** A collapsible Q&A section covering all major topics.
 
 ## 🛠️ Tech Stack
 
-- HTML5 / CSS3 / JavaScript
-- GitHub for version control
-- Vercel for deployment
+-   **HTML5**
+-   **CSS3** (with Custom Properties for theming)
+-   **Vanilla JavaScript**
+-   **[html2canvas.js](https://html2canvas.hertzen.com/)**: For capturing sections as images.
+-   **[JSZip.js](https://stuk.github.io/jszip/)**: For creating ZIP archives in the browser.
+-   **[FileSaver.js](https://github.com/eligrey/FileSaver.js/)**: For saving the generated files.
+-   **[Font Awesome](https://fontawesome.com/)**: For icons.
 
-## 👨‍🏫 Contributors
+## ⚖️ License & Copyright
 
-- Dr. Mahmoud Yehia (Lecturer)
-- Eng. Eslam Osama (TA) – Developer & Designer
+**© 2025 Eng. Eslam Osama. All Rights Reserved.**
 
-> Designed with students in mind – for clearer learning, better engagement, and easier access.
+This content is protected by copyright law. Unauthorized copying, distribution, or use of this material is strictly prohibited. The code, design, and content of this educational module are the exclusive property of the creator. Any reproduction or distribution without express written permission is a violation of copyright law.
+
+This module is provided for educational purposes only. The creator makes no warranties about the completeness, reliability, or accuracy of this information.
 
 
+## Acknowledgments
+
+-   This project was developed for the **Computer Engineering Department** at the **College of Engineering & Technology, AASTMT**.
+-   **Course Instructor:** Dr. Mahmoud Yehia
+-   **Lead Developer & TA:** Eng. Eslam Osama
