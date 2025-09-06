@@ -248,9 +248,8 @@ This project is a **commercial deliverable** developed under the **EOPeak** bran
 #### **Contact for Licensing**
 For commercial licensing inquiries, custom development, or enterprise deployment:
 
-- **Email**: contact@eopeak.com
-- **Website**: https://eopeak.com
-- **LinkedIn**: [Eng. Eslam Osama Saad](https://linkedin.com/in/eslam-osama)
+- **Email**: eo6014501@gmail.com
+- **Website**: [https://eopeak.com](https://eslam-portfolio-phi.vercel.app/)
 
 ### 📜 **Legal Notice**
 This software is provided "as is" without warranty of any kind. Unauthorized use, modification, or distribution is strictly prohibited and may result in legal action.
@@ -264,7 +263,7 @@ This software is provided "as is" without warranty of any kind. Unauthorized use
 - **Role**: Lead Developer & Founder
 - **Company**: EOPeak
 - **Email**: eo6014501@gmail.com
-- **Website**: [eopeak.com](https://eslam-portfolio-phi.vercel.app/)
+- **Website**: [https://eslam-portfolio-phi.vercel.app/](https://eslam-portfolio-phi.vercel.app/)
 
 ### 🆘 **Technical Support**
 For technical issues, feature requests, or general inquiries:
