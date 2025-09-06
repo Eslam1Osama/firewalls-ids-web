@@ -4,6 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Security Learning Module - Firewalls & IDS</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Interactive learning module for Data Security course covering Firewalls, Intrusion Detection Systems, and Network Security fundamentals. Created for ECE4304 at AASTMT.">
+    <meta name="keywords" content="data security, firewalls, intrusion detection, network security, cybersecurity, learning module, AASTMT, ECE4304">
+    <meta name="author" content="Eng. Eslam Osama">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://firewalls-ids-web.vercel.app/">
+    <meta property="og:title" content="Data Security Learning Module - Firewalls & IDS">
+    <meta property="og:description" content="Interactive learning module for Data Security course covering Firewalls, Intrusion Detection Systems, and Network Security fundamentals.">
+    <meta property="og:image" content="https://firewalls-ids-web.vercel.app/assets/logo.svg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Data Security Learning Module">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://firewalls-ids-web.vercel.app/">
+    <meta name="twitter:title" content="Data Security Learning Module - Firewalls & IDS">
+    <meta name="twitter:description" content="Interactive learning module for Data Security course covering Firewalls, Intrusion Detection Systems, and Network Security fundamentals.">
+    <meta name="twitter:image" content="https://firewalls-ids-web.vercel.app/assets/logo.svg">
+    <meta name="twitter:creator" content="@eslam_osama">
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/logo.svg">
+    <link rel="icon" href="assets/favicon.svg" sizes="any">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#00ACC1">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    <meta name="theme-color" content="#00ACC1">
+
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Data Security Learning Module">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Data Security Module">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-starturl" content="/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> Removed jsPDF as we are switching to DOCX -->
     <!-- <script src="https://unpkg.com/docx@latest/build/index.js"></script> Removed DOCX library as we are switching to ZIP -->
@@ -1142,8 +1188,9 @@
             word-break: break-word;
         }
         [data-theme="dark"] .objective-card {
-            background: var(--secondary);
-            color: var(--blue3);
+            background: var(--blue1); /* Dark blue background for better contrast */
+            color: var(--text-main); /* Light text for dark mode */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow for dark mode */
         }
 
         .objective-card h4 {
@@ -1151,6 +1198,10 @@
             margin-bottom: 10px;
             color: var(--accent);
             text-align: left;
+        }
+
+        [data-theme="dark"] .objective-card h4 {
+            color: var(--text-main); /* Light color for headings in dark mode */
         }
 
         .objective-card p {
@@ -1946,8 +1997,9 @@
             word-break: break-word;
         }
         [data-theme="dark"] .objective-card {
-            background: var(--secondary);
-            color: var(--blue3);
+            background: var(--blue1); /* Dark blue background for better contrast */
+            color: var(--text-main); /* Light text for dark mode */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Enhanced shadow for dark mode */
         }
 
         .objective-card h4 {
@@ -1955,6 +2007,10 @@
             margin-bottom: 10px;
             color: var(--accent);
             text-align: left;
+        }
+
+        [data-theme="dark"] .objective-card h4 {
+            color: var(--text-main); /* Light color for headings in dark mode */
         }
 
         .objective-card p {
@@ -3658,6 +3714,17 @@
         }
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
+            // Register service worker for PWA functionality
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('[PWA] Service worker registered successfully:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.error('[PWA] Service worker registration failed:', error);
+                    });
+            }
+
             // Set up navigation buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -4297,8 +4364,9 @@
     </script>
 
     <footer>
-        <div class="footer-content">
-            <p>Data Security Learning Module - Firewalls & IDS | Created for Educational Purposes | By Eng. Eslam Osama</p>
+        <div class="footer-content">        
+            <p>Developed by <span class="brand">EOPeak</span> | <span class="developer">Eslam Osama Saad</span></p>
+            <p>© 2025 Digital Logic Design Lab Manual | MSA University</p>
             <div class="copyright-notice">
                 <button class="copyright-btn" onclick="showCopyrightNotice()">
                     <i class="fas fa-copyright"></i> All Rights Reserved

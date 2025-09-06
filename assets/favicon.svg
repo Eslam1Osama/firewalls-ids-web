@@ -1,0 +1,60 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    Professional SVG Favicon for "Firewalls & Intrusion Detection Systems" (Light Mode)
+    Author: Gemini
+    Version: 3.0 (Frameless with enhanced material details)
+    Description: A frameless, transparent favicon with refined lighting, textures, and depth.
+  -->
+  <defs>
+    <!-- Color Palette (Light Mode) -->
+    <linearGradient id="faviconShield" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5;" />
+      <stop offset="100%" style="stop-color:#1E88E5;" />
+    </linearGradient>
+    <radialGradient id="idsDotGradient" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+      <stop offset="0%" style="stop-color:#EF5350" />
+      <stop offset="100%" style="stop-color:#C62828" />
+    </radialGradient>
+    <!-- Micro-detail: Sheen gradient for a reflective, polished metal look on the shield. -->
+    <linearGradient id="shieldSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:white; stop-opacity:0.35;" />
+      <stop offset="50%" style="stop-color:white; stop-opacity:0;" />
+      <stop offset="100%" style="stop-color:white; stop-opacity:0;" />
+    </linearGradient>
+
+    <!-- Micro-detail: Refined shadow for better depth on a transparent background. -->
+    <filter id="faviconShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+    
+    <style>
+      .shield-highlight { stroke: #FFFFFF; stroke-width: 1.5px; stroke-opacity: 0.8; }
+    </style>
+  </defs>
+
+  <!-- 
+    Combined Firewall & IDS Symbol
+    The background has been removed for a clean, modern look.
+    The symbol is designed to be placed on any color background.
+  -->
+  <g transform="translate(16, 16) scale(0.25)" filter="url(#faviconShadow)">
+    <!-- Shield (Firewall) -->
+    <path d="M 0 -55 C 40 -55 70 -25 70 15 L 0 55 L -70 15 C -70 -25 -40 -55 0 -55 Z" fill="url(#faviconShield)" />
+    <!-- Shield Sheen Overlay -->
+    <path d="M 0 -55 C 40 -55 70 -25 70 15 L 0 55 L -70 15 C -70 -25 -40 -55 0 -55 Z" fill="url(#shieldSheen)" />
+    <!-- Shield Inner Highlight -->
+    <path d="M 0 -48 C 35 -48 62 -22 62 12 L 0 47 L -62 12 C -62 -22 -35 -48 0 -48 Z" fill="none" class="shield-highlight" />
+    
+    <!-- Multi-layered scanning eye, reflecting the main logo. -->
+    <g id="scanning-eye">
+      <circle cx="0" cy="0" r="12" fill="#FFFFFF" />
+      <circle cx="0" cy="0" r="9" fill="url(#idsDotGradient)" />
+      <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" opacity="0.15" />
+      <circle cx="0" cy="0" r="3" fill="#37474F" />
+      <!-- Micro-detail: Lens glint for a more dynamic and realistic eye. -->
+      <path d="M -5 -2 A 6 6 0 0 1 2 -5 L 0 -3 Z" fill="white" opacity="0.7"/>
+    </g>
+  </g>
+
+</svg>
+

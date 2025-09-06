@@ -1,0 +1,92 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- 
+    Professional SVG Icon for "Firewalls & Intrusion Detection Systems" (Light Mode)
+    Author: Gemini
+    Description: A clean, modern, and symbolic representation of cybersecurity concepts for light UIs. 
+                 The firewall is depicted as a strong shield, and the IDS is a vigilant scanning eye.
+  -->
+  <defs>
+    <!-- Color Palette (Light Mode) -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F4F6F8;" />
+      <stop offset="100%" style="stop-color:#FFFFFF;" />
+    </linearGradient>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#42A5F5;" />
+      <stop offset="100%" style="stop-color:#1E88E5;" />
+    </linearGradient>
+    <linearGradient id="threatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF5350;" />
+      <stop offset="100%" style="stop-color:#E53935;" />
+    </linearGradient>
+
+    <!-- Filters for Depth and Glow -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+      <feOffset in="blur" dx="2" dy="3" result="offsetBlur" />
+      <feFlood flood-color="#000" flood-opacity="0.15" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetBlur"/>
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="200" rx="20" fill="url(#bgGradient)" />
+
+  <!-- Central Shield (Firewall) -->
+  <g id="firewall-shield" transform="translate(100, 95)" filter="url(#dropShadow)">
+    <path d="M 0 -55 C 40 -55 70 -25 70 15 L 0 55 L -70 15 C -70 -25 -40 -55 0 -55 Z" fill="url(#shieldGradient)" />
+    <path d="M 0 -48 C 35 -48 62 -22 62 12 L 0 47 L -62 12 C -62 -22 -35 -48 0 -48 Z" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.9" />
+    <!-- Grid pattern on shield -->
+    <line x1="-65" y1="0" x2="65" y2="0" stroke="#1E88E5" stroke-width="1.5" stroke-opacity="0.2" />
+    <line x1="-30" y1="-35" x2="30" y2="-35" stroke="#1E88E5" stroke-width="1.5" stroke-opacity="0.2" />
+    <line x1="0" y1="-50" x2="0" y2="50" stroke="#1E88E5" stroke-width="1.5" stroke-opacity="0.2" />
+  </g>
+
+  <!-- Scanning Eye (Intrusion Detection System) -->
+  <g id="ids-scanner" transform="translate(100, 95)">
+    <circle cx="0" cy="0" r="22" fill="#FFFFFF" />
+    <circle cx="0" cy="0" r="15" fill="url(#threatGradient)" filter="url(#glow)" />
+    <circle cx="0" cy="0" r="7" fill="#E3E8EC" />
+    <circle cx="0" cy="0" r="3" fill="#37474F" />
+    <!-- Scanning Lines -->
+    <g stroke="#E53935" stroke-width="1.5" stroke-opacity="0.7">
+        <path d="M-30,-30 Q-15,-5 0,0" fill="none"/>
+        <path d="M35,-25 Q10,-10 0,0" fill="none"/>
+        <path d="M-20,35 Q-5,10 0,0" fill="none"/>
+    </g>
+  </g>
+  
+  <!-- Data Packets & Interaction -->
+  <g id="network-traffic">
+    <!-- Blocked Packet -->
+    <g transform="translate(45, 55)">
+        <rect x="-5" y="-5" width="10" height="10" rx="2" fill="url(#threatGradient)" filter="url(#dropShadow)"/>
+        <line x1="-2.5" y1="2.5" x2="2.5" y2="-2.5" stroke="white" stroke-width="1.5" />
+        <line x1="-2.5" y1="-2.5" x2="2.5" y2="2.5" stroke="white" stroke-width="1.5" />
+    </g>
+    <!-- Allowed Packet -->
+    <g transform="translate(155, 135)">
+        <rect x="-5" y="-5" width="10" height="10" rx="2" fill="#26A69A" filter="url(#dropShadow)"/>
+        <polyline points="-3,0 0,3 4,-3" stroke="white" stroke-width="1.5" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Title Text -->
+  <g id="title" text-anchor="middle" fill="#37474F">
+    <text x="100" y="178" font-size="16" font-weight="600" letter-spacing="1">FIREWALLS</text>
+    <text x="100" y="194" font-size="10" font-weight="400" letter-spacing="0.5" fill="#546E7A">&amp; INTRUSION DETECTION</text>
+  </g>
+
+</svg>
+
